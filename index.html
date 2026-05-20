@@ -4,6 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>65th Annual Lunch - 活動簽到與後台管理系統</title>
+    
+    <script>
+        (function() {
+            const expiryDate = new Date('2026-06-08T00:00:00+08:00').getTime();
+            const now = new Date().getTime();
+
+            if (now >= expiryDate) {
+                document.addEventListener("DOMContentLoaded", function() {
+                    document.body.innerHTML = `
+                        <div style="display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #FDFCFB; font-family: 'Poppins', 'Noto Sans HK', sans-serif; text-align: center; flex-direction: column; padding: 20px;">
+                            <h1 style="color: #800000; font-size: 2.5rem; margin-bottom: 10px;">系統已關閉<br>System Closed</h1>
+                            <p style="color: #6B7280; font-size: 1.2rem;">65th Annual Lunch 簽到系統已於設定時間停止服務。<br>感謝您的參與！</p>
+                        </div>
+                    `;
+                });
+            }
+        })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+HK:wght@400;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -26,108 +44,63 @@
             --shadow-md: 0 10px 15px -3px rgba(128, 0, 0, 0.05), 0 4px 6px -2px rgba(128, 0, 0, 0.03);
         }
 
-        * {
-            box-sizing: border-box;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        body {
-            font-family: 'Poppins', 'Noto Sans HK', sans-serif;
-            background-color: var(--bg-warm-gray);
-            margin: 0;
-            padding: 0;
-            color: var(--text-main);
-            padding-bottom: 40px;
-        }
+        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        body { font-family: 'Poppins', 'Noto Sans HK', sans-serif; background-color: var(--bg-warm-gray); margin: 0; padding: 0; color: var(--text-main); padding-bottom: 40px; }
 
         /* 導覽列 */
-        header {
-            background-color: var(--card-bg);
-            padding: 15px 25px;
-            box-shadow: var(--shadow-md);
-            border-bottom: 3px solid var(--accent-gold);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
+        header { background-color: var(--card-bg); padding: 15px 25px; box-shadow: var(--shadow-md); border-bottom: 3px solid var(--accent-gold); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
         .logo-area { display: flex; align-items: center; gap: 15px; }
         .logo-area img { height: 55px; width: auto; border-radius: var(--radius-sm); }
         .logo-area span { font-weight: 700; font-size: 1.3rem; color: var(--primary-burgundy); letter-spacing: -0.5px; }
 
         .nav-btns { display: flex; gap: 10px; background-color: #F3F4F6; padding: 5px; border-radius: var(--radius-full); }
-        .nav-btns button {
-            padding: 10px 22px; border: none; border-radius: var(--radius-full); cursor: pointer;
-            background-color: transparent; font-weight: 600; font-size: 0.95rem; color: var(--text-light); transition: all 0.3s ease;
-        }
+        .nav-btns button { padding: 10px 22px; border: none; border-radius: var(--radius-full); cursor: pointer; background-color: transparent; font-weight: 600; font-size: 0.95rem; color: var(--text-light); transition: all 0.3s ease; }
         .nav-btns button:hover:not(.active) { color: var(--primary-burgundy); }
         .nav-btns button.active { background-color: var(--primary-burgundy); color: white; box-shadow: 0 4px 6px rgba(128, 0, 0, 0.2); }
         
         /* 內容容器 */
-        .container {
-            max-width: 850px; margin: 30px auto; padding: 30px; background: var(--card-bg);
-            border-radius: var(--radius-md); box-shadow: var(--shadow-md);
-        }
+        .container { max-width: 850px; margin: 30px auto; padding: 30px; background: var(--card-bg); border-radius: var(--radius-md); box-shadow: var(--shadow-md); }
 
-        /* 🔥 修復區域：控制分頁顯示與隱藏，並加入淡入動畫 */
+        /* 分頁切換與動畫 */
         .tab-content { display: none; }
-        .tab-content.active { 
-            display: block; 
-            animation: fadeIn 0.4s ease forwards;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
         h2 { font-weight: 700; color: var(--primary-burgundy); margin-top: 0; margin-bottom: 20px; border-left: 5px solid var(--accent-gold); padding-left: 15px; }
         h3 { font-weight: 600; color: var(--text-main); margin-top: 25px; }
         p { color: var(--text-light); line-height: 1.6; }
         
         /* 表單元件 */
-        input[type="text"] {
-            width: 100%; padding: 15px 20px; margin: 10px 0 0 0; border: 2px solid #E5E7EB;
-            border-radius: var(--radius-full); box-sizing: border-box; font-size: 1rem; transition: all 0.3s ease; background-color: #F9FAFB;
-        }
-        input[type="text"]:focus { border-color: var(--accent-gold); background-color: white; outline: none; box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1); }
+        input[type="text"], input[type="password"] { width: 100%; padding: 15px 20px; margin: 10px 0 0 0; border: 2px solid #E5E7EB; border-radius: var(--radius-full); box-sizing: border-box; font-size: 1rem; transition: all 0.3s ease; background-color: #F9FAFB; }
+        input[type="text"]:focus, input[type="password"]:focus { border-color: var(--accent-gold); background-color: white; outline: none; box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1); }
         input[type="file"] { margin: 15px 0; color: var(--text-light); font-size: 0.9rem; }
         
-        button.btn {
-            background-color: var(--primary-burgundy); color: white; padding: 14px 28px; border: none;
-            border-radius: var(--radius-full); cursor: pointer; width: 100%; font-size: 1.1rem; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(128, 0, 0, 0.2);
-        }
+        button.btn { background-color: var(--primary-burgundy); color: white; padding: 14px 28px; border: none; border-radius: var(--radius-full); cursor: pointer; width: 100%; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(128, 0, 0, 0.2); }
         button.btn:hover { background-color: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 12px rgba(128, 0, 0, 0.25); }
         button.btn-danger { background-color: transparent; color: var(--danger-red); border: 2px solid var(--danger-red); box-shadow: none; }
         button.btn-danger:hover { background-color: var(--danger-red); color: white; box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2); }
         button.btn-success { background-color: var(--success-green); box-shadow: 0 4px 6px rgba(21, 128, 61, 0.2); }
         button.btn-success:hover { background-color: #166534; box-shadow: 0 6px 12px rgba(21, 128, 61, 0.25); }
-        
+        button.btn-secondary { background-color: #E5E7EB; color: var(--text-main); box-shadow: none; }
+        button.btn-secondary:hover { background-color: #D1D5DB; transform: translateY(0); box-shadow: none; }
+        button.btn-logout { background-color: transparent; color: var(--text-light); border: 1px solid #D1D5DB; padding: 6px 15px; font-size: 0.85rem; border-radius: var(--radius-full); cursor: pointer; font-weight: 600; }
+        button.btn-logout:hover { background-color: #F3F4F6; color: var(--danger-red); border-color: var(--danger-red); }
+
         /* 座位表圖片區 */
         .seating-plan { width: 100%; text-align: center; margin-bottom: 25px; border: 2px dashed #D1D5DB; border-radius: var(--radius-md); padding: 15px; background-color: #F9FAFB; }
         .seating-plan img { max-width: 100%; height: auto; border-radius: var(--radius-sm); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         
         /* Smart Search 結果列表 */
-        .search-results-container {
-            max-height: 380px; overflow-y: auto; border: none; border-radius: var(--radius-md); background: white;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1); display: none; margin-top: 10px; position: absolute; width: calc(100% - 60px); z-index: 50;
-        }
+        .search-results-container { max-height: 380px; overflow-y: auto; border: none; border-radius: var(--radius-md); background: white; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1); display: none; margin-top: 10px; position: absolute; width: calc(100% - 60px); z-index: 50; }
         .search-result-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #F3F4F6; }
         .search-result-item:hover { background-color: rgba(212, 175, 55, 0.05); }
         .guest-info strong { font-size: 1.15rem; color: var(--text-main); }
         .guest-info span { font-size: 0.95rem; color: var(--primary-burgundy); margin-left: 10px; font-weight: 600; }
 
-        /* 列表內的按鈕 */
         .btn-checkin { background-color: var(--primary-burgundy); color: white; border: none; padding: 9px 20px; border-radius: var(--radius-full); cursor: pointer; font-weight: 700; font-size: 0.9rem; transition: all 0.2s ease; }
         .btn-checkin:hover { background-color: var(--primary-hover); transform: scale(1.05); }
         .btn-signed { background-color: #E5E7EB; color: var(--text-light); border: none; padding: 9px 20px; border-radius: var(--radius-full); cursor: not-allowed; font-weight: 600; font-size: 0.9rem; }
 
-        /* 簽到成功提示 */
         #signInAlert { padding: 18px; margin-top: 20px; border-radius: var(--radius-md); display: none; font-weight: 700; font-size: 1.15rem; text-align: center; box-shadow: var(--shadow-md); animation: slideInDown 0.4s ease; }
         @keyframes slideInDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         
@@ -137,7 +110,20 @@
         .list-group li:hover { border-color: #D1D5DB; background-color: white; }
         .status-badge { background-color: var(--success-green); color: white; padding: 5px 12px; border-radius: var(--radius-full); font-size: 0.8rem; font-weight: 700; white-space: nowrap; }
 
-        /* 手機版適配微調 */
+        /* 🔥 登入 Modal 樣式 */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(4px); z-index: 1000;
+            justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: var(--card-bg); padding: 35px 30px; border-radius: var(--radius-md);
+            width: 90%; max-width: 400px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            text-align: center; animation: slideInDown 0.3s ease;
+        }
+        .modal-error { color: var(--danger-red); font-size: 0.95rem; font-weight: 600; display: none; margin-bottom: 15px; }
+        .modal-btns { display: flex; gap: 10px; margin-top: 25px; }
+
         @media (max-width: 600px) {
             header { flex-direction: column; gap: 15px; padding: 15px; text-align: center;}
             .logo-area { flex-direction: column; gap: 5px; }
@@ -184,10 +170,15 @@
     </div>
 
     <div id="back" class="container tab-content">
-        <h2>1. 匯入名單資料庫 (Excel/CSV)</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="margin-bottom: 0;">1. 匯入名單資料庫</h2>
+            <button class="btn-logout" onclick="handleLogout()">🔒 登出後台</button>
+        </div>
+        
         <p style="margin-top: 0;">活動開始前，請上傳包含「English Name」、「Chinese Name」、「Table No.」欄位的檔案。</p>
         <input type="file" id="excelUpload" accept=".xlsx, .xls, .csv">
         <hr style="margin: 30px 0; border: 0; border-top: 1px solid #eee;">
+        
         <h2>2. 已簽到名單管理</h2>
         <div style="display: flex; gap: 15px; margin-bottom: 25px; flex-wrap: wrap;">
             <button class="btn btn-success" style="flex: 1.5; margin: 0;" onclick="exportExcel()">📥 匯出已簽到 Excel</button>
@@ -197,16 +188,45 @@
         <ul id="signedInList" class="list-group"></ul>
     </div>
 
+    <div id="loginModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 style="border:none; padding:0; text-align:center; font-size:1.5rem; margin-bottom:5px;">管理員登入</h2>
+            <p style="font-size:0.9rem; color:var(--text-light); margin-bottom:20px;">請輸入帳號與密碼進入後台管理</p>
+            
+            <div id="loginError" class="modal-error">❌ 帳號或密碼錯誤！</div>
+            
+            <input type="text" id="adminUser" placeholder="帳號 (Username)" autocomplete="off">
+            <input type="password" id="adminPass" placeholder="密碼 (Password)" onkeypress="if(event.key === 'Enter') handleLogin()">
+            
+            <div class="modal-btns">
+                <button class="btn btn-secondary" onclick="closeLoginModal()">取消</button>
+                <button class="btn" onclick="handleLogin()">登入</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let guestDatabase = JSON.parse(localStorage.getItem('guestDatabase')) || [];
         let signedInGuests = JSON.parse(localStorage.getItem('signedInGuests')) || [];
+        
+        // 檢查 Session 中是否已經登入過
+        let isAdminLoggedIn = sessionStorage.getItem('adminAuth') === 'true';
 
         window.onload = () => {
             renderSignedInList();
             document.getElementById('excelUpload').addEventListener('change', handleExcelUpload, false);
         };
 
+        // --- 🔥 登入驗證邏輯 ---
         function switchTab(tabId) {
+            // 如果要切換到後台，但還沒登入
+            if (tabId === 'back' && !isAdminLoggedIn) {
+                document.getElementById('loginModal').style.display = 'flex';
+                document.getElementById('adminUser').focus();
+                return; // 中止切換
+            }
+
+            // 正常的切換邏輯
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-btns button').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
@@ -219,6 +239,38 @@
                 document.getElementById('searchInput').focus();
             }
         }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('loginError').style.display = 'none';
+            document.getElementById('adminUser').value = '';
+            document.getElementById('adminPass').value = '';
+        }
+
+        function handleLogin() {
+            const user = document.getElementById('adminUser').value.trim();
+            const pass = document.getElementById('adminPass').value.trim();
+            
+            // 驗證你設定的帳號密碼
+            if (user === 'admin' && pass === 'Abcd1234') {
+                isAdminLoggedIn = true;
+                sessionStorage.setItem('adminAuth', 'true'); // 存入 Session
+                closeLoginModal();
+                switchTab('back'); // 登入成功，切換到後台
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+                document.getElementById('adminPass').value = ''; // 清空密碼欄位
+                document.getElementById('adminPass').focus();
+            }
+        }
+
+        function handleLogout() {
+            isAdminLoggedIn = false;
+            sessionStorage.removeItem('adminAuth'); // 移除認證紀錄
+            switchTab('front'); // 強制退回前台
+            alert("已登出後台管理系統，系統已鎖定。");
+        }
+        // -------------------------
 
         function handleExcelUpload(e) {
             const file = e.target.files[0];
@@ -268,7 +320,7 @@
 
             if (guestDatabase.length === 0) {
                 resultsContainer.style.display = "block";
-                resultsContainer.innerHTML = "<div style='padding:20px; color:#DC2626; font-weight:bold; text-align:center;'>尚未匯入名單，請先至後台匯入 Excel。</div>";
+                resultsContainer.innerHTML = "<div style='padding:20px; color:#DC2626; font-weight:bold; text-align:center;'>尚未匯入名單，請先由管理員至後台匯入 Excel。</div>";
                 return;
             }
 
