@@ -25,6 +25,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+HK:wght@400;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
             --primary-burgundy: #800000;
@@ -56,7 +57,6 @@
         .nav-btns button:hover:not(.active) { color: var(--primary-burgundy); }
         .nav-btns button.active { background-color: var(--primary-burgundy); color: white; box-shadow: 0 4px 6px rgba(128, 0, 0, 0.2); }
         
-        /* 雲端同步按鈕 */
         .btn-sync { background-color: #E0E7FF !important; color: #4338CA !important; display: flex; align-items: center; gap: 5px; margin-right: 10px; }
         .btn-sync:hover { background-color: #C7D2FE !important; }
         .sync-icon { transition: transform 1s ease; }
@@ -110,7 +110,6 @@
         .modal-error { color: var(--danger-red); font-size: 0.95rem; font-weight: 600; display: none; margin-bottom: 15px; }
         .modal-btns { display: flex; gap: 10px; margin-top: 25px; }
 
-        /* Loader */
         .loader-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.8); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; display: none; }
         .spinner { border: 4px solid rgba(0,0,0,0.1); width: 40px; height: 40px; border-radius: 50%; border-left-color: var(--primary-burgundy); animation: spin 1s linear infinite; margin-bottom: 15px;}
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -211,16 +210,14 @@
         let guestDatabase = []; 
         let isAdminLoggedIn = sessionStorage.getItem('adminAuth') === 'true';
 
-        // 頁面載入時自動從 Google Sheets 抓資料
         window.onload = () => {
-            if (WEB_APP_URL === "https://script.google.com/macros/s/AKfycby2lELHtiwgW6rvQRn2dLDbJw4yzhb_WlJIOcFTVeM3adrd-I0nIKua1Ib9BXR99HcsgA/exec") {
+            if (WEB_APP_URL === "YOUR_WEB_APP_URL_HERE") {
                 alert("⚠️ 請注意：尚未填寫 WEB_APP_URL！系統無法連線至 Google Sheets。");
             } else {
                 fetchCloudData();
             }
         };
 
-        // 從 Google Sheets 抓取資料
         function fetchCloudData() {
             const syncBtn = document.getElementById('btn-sync');
             const loader = document.getElementById('loader');
@@ -235,14 +232,13 @@
                 .then(response => response.json())
                 .then(data => {
                     guestDatabase = data;
-                    renderSignedInList(); // 更新後台名單
+                    renderSignedInList(); 
                     
                     loader.style.display = 'none';
                     syncBtn.classList.remove('syncing');
                     searchInput.disabled = false;
                     searchInput.placeholder = "輸入姓名尋找 (Chan, Lee, 陳大文...)";
                     
-                    // 如果搜尋框有字，自動刷新搜尋結果
                     if(searchInput.value.trim() !== "") handleLiveSearch();
                 })
                 .catch(error => {
@@ -253,7 +249,6 @@
                 });
         }
 
-        // 寫入資料到 Google Sheets
         function updateCloudData(engName, chiName, signInTime) {
             fetch(WEB_APP_URL, {
                 method: 'POST',
@@ -269,7 +264,6 @@
               }).catch(err => console.error("發送至雲端失敗:", err));
         }
 
-        // --- 顯示邏輯與搜尋 (與之前大致相同) ---
         function getDisplayName(guest) {
             const eng = (guest['English Name'] || "").toString().trim();
             const chi = (guest['Chinese Name'] || "").toString().trim();
@@ -307,8 +301,6 @@
             matches.forEach(guest => {
                 const displayName = getDisplayName(guest);
                 const tableNo = guest['Table No.'] || guest['Table Number'] || '未分配';
-                
-                // 檢查 Google Sheet 中的 SignInTime 欄位是否有值
                 const alreadySigned = (guest['SignInTime'] && guest['SignInTime'].toString().trim() !== "");
 
                 const itemDiv = document.createElement('div');
@@ -343,9 +335,8 @@
 
             if (guest) {
                 const timeStr = new Date().toLocaleString('zh-HK');
-                guest['SignInTime'] = timeStr; // 本地先更新狀態，讓畫面秒變
+                guest['SignInTime'] = timeStr; 
                 
-                // 非同步發送資料到 Google Sheets
                 updateCloudData(guest['English Name'] || "", guest['Chinese Name'] || "", timeStr);
                 
                 const tableNo = guest['Table No.'] || guest['Table Number'] || '未分配';
@@ -364,10 +355,7 @@
             const list = document.getElementById('signedInList');
             list.innerHTML = "";
             
-            // 篩選出已經簽到的來賓
             const signedInGuests = guestDatabase.filter(g => g['SignInTime'] && g['SignInTime'].toString().trim() !== "");
-            
-            // 依照簽到時間排序 (最新的在最上面)
             signedInGuests.sort((a, b) => new Date(b.SignInTime) - new Date(a.SignInTime));
 
             document.getElementById('signCount').textContent = signedInGuests.length;
@@ -375,7 +363,6 @@
             signedInGuests.forEach(guest => {
                 const displayName = getDisplayName(guest);
                 const tableNo = guest['Table No.'] || guest['Table Number'] || 'N/A';
-                // 擷取時間部分 (e.g., 12:34:56)
                 const timeStr = guest['SignInTime'].split(' ')[1] || guest['SignInTime'];
 
                 const li = document.createElement('li');
@@ -390,7 +377,6 @@
             });
         }
 
-        // --- UI 控制邏輯 ---
         function switchTab(tabId) {
             if (tabId === 'back' && !isAdminLoggedIn) {
                 document.getElementById('loginModal').style.display = 'flex';
