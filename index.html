@@ -117,13 +117,13 @@
         .spinner { border: 4px solid rgba(0,0,0,0.1); width: 40px; height: 40px; border-radius: 50%; border-left-color: var(--primary-burgundy); animation: spin 1s linear infinite; margin-bottom: 15px;}
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* 🔥 各桌全名單卡片：完美對齊 Table 排版 🔥 */
+        /* 各桌全名單卡片：完美對齊 Table 排版 */
         .table-status-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 20px; margin-top: 20px; }
         .table-card { background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: var(--radius-md); padding: 15px 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
         .table-card-header { font-weight: 700; color: var(--primary-burgundy); border-bottom: 2px solid var(--accent-gold); padding-bottom: 10px; margin-bottom: 8px; font-size: 1.15rem; display: flex; justify-content: space-between; align-items: center; }
         
         .guest-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        .guest-table td { padding: 10px 4px; border-bottom: 1px solid #F3F4F6; text-align: left; font-size: 0.95rem; font-weight: 600; vertical-align: top; } /* 統一頂部對齊，避免多行時走位 */
+        .guest-table td { padding: 10px 4px; border-bottom: 1px solid #F3F4F6; text-align: left; font-size: 0.95rem; font-weight: 600; vertical-align: top; } 
         .guest-table tr:last-child td { border-bottom: none; } 
         
         .status-icon { display: inline-block; width: 16px; text-align: left; margin-right: 2px; margin-top: 1px; }
@@ -132,6 +132,25 @@
         .guest-missing { color: var(--danger-red); }
         .guest-arrived { color: var(--success-green); }
         .guest-time { font-size: 0.82rem !important; color: #9CA3AF; font-weight: normal !important; text-align: left !important; }
+
+        /* 🔥 全螢幕巨大化桌號彈出特效 🔥 */
+        .massive-table-overlay { 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+            background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(5px);
+            z-index: 10000; display: flex; justify-content: center; align-items: center; 
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease; 
+        }
+        .massive-table-overlay.show { opacity: 1; pointer-events: auto; }
+        .massive-table-content { 
+            background: var(--primary-burgundy); color: var(--accent-gold); 
+            padding: 50px 100px; border-radius: 40px; text-align: center; 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5); 
+            transform: scale(0.5); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            border: 6px solid var(--accent-gold); 
+        }
+        .massive-table-overlay.show .massive-table-content { transform: scale(1); }
+        .massive-title { font-size: 2.5rem; display: block; margin-bottom: 10px; font-weight: 600; color: #fff; letter-spacing: 2px; }
+        #massiveTableNo { font-size: 9rem; font-weight: 700; line-height: 1; text-shadow: 0 10px 20px rgba(0,0,0,0.3); }
 
         @media (max-width: 850px) { .front-layout { flex-direction: column; gap: 25px; } }
         @media (max-width: 600px) {
@@ -143,6 +162,8 @@
             .search-result-item { flex-direction: column; align-items: flex-start; gap: 12px; }
             .btn-checkin, .btn-signed { width: 100%; padding: 12px; }
             .table-status-grid { grid-template-columns: 1fr; }
+            .massive-table-content { padding: 40px 60px; }
+            #massiveTableNo { font-size: 6rem; }
         }
     </style>
 </head>
@@ -151,6 +172,13 @@
     <div id="loader" class="loader-overlay">
         <div class="spinner"></div>
         <div id="loader-text" style="font-weight: 600; color: var(--primary-burgundy);">正在與 Google Sheets 同步資料...</div>
+    </div>
+
+    <div id="massiveTableOverlay" class="massive-table-overlay">
+        <div class="massive-table-content">
+            <span class="massive-title">請前往桌號</span>
+            <span id="massiveTableNo">8</span>
+        </div>
     </div>
 
     <header>
@@ -335,17 +363,24 @@
             });
         }
 
+        // 🔥 簽到函數更新：加入全螢幕巨大化特效 🔥
         function signInSpecificGuest(engNameEnc, chiNameEnc) {
             const engName = decodeURIComponent(engNameEnc);
             const chiName = decodeURIComponent(chiNameEnc);
             const guest = guestDatabase.find(g => (g['English Name'] || "").toString() === engName && (g['Chinese Name'] || "").toString() === chiName);
+            
             if (guest) {
                 const timeStr = new Date().toLocaleString('zh-HK');
                 guest['SignInTime'] = timeStr; 
+                const tableNo = guest['Table No.'] || guest['Table Number'] || '未分配';
                 
                 updateCloudData(guest['English Name'] || "", guest['Chinese Name'] || "", timeStr).catch(e => console.error(e));
                 
-                showAlert(`✅ 簽到成功！歡迎 <strong>${getDisplayName(guest)}</strong>，桌號：<strong>${guest['Table No.'] || '未分配'}</strong>`, "#15803D", "#D1FAE5");
+                // 1. 觸發全螢幕巨大桌號動畫
+                showMassiveTableOverlay(tableNo);
+                
+                // 2. 顯示綠色成功框
+                showAlert(`✅ 簽到成功！歡迎 <strong>${getDisplayName(guest)}</strong>，桌號：<strong>${tableNo}</strong>`, "#15803D", "#D1FAE5");
                 
                 renderSignedInList();
                 renderTableStatus(); 
@@ -354,6 +389,18 @@
                 document.getElementById('searchResults').style.display = "none";
                 document.getElementById('searchInput').focus();
             }
+        }
+
+        // 🔥 播放特效的專屬 Function
+        function showMassiveTableOverlay(tableNo) {
+            const overlay = document.getElementById('massiveTableOverlay');
+            document.getElementById('massiveTableNo').textContent = tableNo;
+            overlay.classList.add('show');
+            
+            // 2.5 秒後自動隱藏
+            setTimeout(() => {
+                overlay.classList.remove('show');
+            }, 2500);
         }
 
         function renderSignedInList() {
@@ -376,7 +423,6 @@
             });
         }
 
-        // 🔥 更新：智能字體縮放 + Word Wrap + 完美對齊表格 🔥
         function renderTableStatus() {
             const container = document.getElementById('tableStatusContainer');
             if (!container) return;
@@ -384,7 +430,6 @@
 
             const tablesData = {};
             
-            // 分類與計算
             guestDatabase.forEach(guest => {
                 const tableNo = guest['Table No.'] || guest['Table Number'] || '未分配';
                 if (!tablesData[tableNo]) tablesData[tableNo] = { total: 0, missingCount: 0, guests: [] };
@@ -402,11 +447,10 @@
                     engName: (guest['English Name'] || "").toString().trim(),
                     chiName: (guest['Chinese Name'] || "").toString().trim(),
                     signedIn: alreadySigned,
-                    time: timeStr ? (timeStr.split(' ')[1] || timeStr) : "" // 擷取時間部分
+                    time: timeStr ? (timeStr.split(' ')[1] || timeStr) : ""
                 });
             });
 
-            // 桌號排序
             const sortedTableNos = Object.keys(tablesData).sort((a, b) => {
                 const numA = parseInt(a);
                 const numB = parseInt(b);
@@ -414,7 +458,6 @@
                 return a.localeCompare(b);
             });
 
-            // 產生卡片與內部 Table
             sortedTableNos.forEach(tableNo => {
                 const data = tablesData[tableNo];
                 const card = document.createElement('div');
@@ -430,12 +473,10 @@
                     <table class="guest-table">
                 `;
                 
-                // 逐個加入表格列 (tr)
                 data.guests.forEach(g => {
                     const icon = g.signedIn ? '✓' : '<span class="red-dot"></span>';
                     const rowClass = g.signedIn ? 'guest-arrived' : 'guest-missing';
                     
-                    // 🧠 智能判斷：太長的英文名自動縮細字體
                     let engFontSize = "0.95rem";
                     if (g.engName.length > 22) {
                         engFontSize = "0.75rem";
