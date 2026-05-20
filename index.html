@@ -206,14 +206,14 @@
         // ==========================================
         // ⚠️ 請將下方的 URL 替換為你的 Web App URL
         // ==========================================
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbweQTTyVMxszRJ7pC-4RUquSa7dm8AF-u3Qr7P7Db_g/dev"; 
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby2lELHtiwgW6rvQRn2dLDbJw4yzhb_WlJIOcFTVeM3adrd-I0nIKua1Ib9BXR99HcsgA/exec"; 
         
         let guestDatabase = []; 
         let isAdminLoggedIn = sessionStorage.getItem('adminAuth') === 'true';
 
         // 頁面載入時自動從 Google Sheets 抓資料
         window.onload = () => {
-            if (WEB_APP_URL === "https://script.google.com/macros/s/AKfycbweQTTyVMxszRJ7pC-4RUquSa7dm8AF-u3Qr7P7Db_g/dev") {
+            if (WEB_APP_URL === "https://script.google.com/macros/s/AKfycby2lELHtiwgW6rvQRn2dLDbJw4yzhb_WlJIOcFTVeM3adrd-I0nIKua1Ib9BXR99HcsgA/exec") {
                 alert("⚠️ 請注意：尚未填寫 WEB_APP_URL！系統無法連線至 Google Sheets。");
             } else {
                 fetchCloudData();
