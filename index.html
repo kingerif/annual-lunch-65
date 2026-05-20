@@ -47,7 +47,11 @@
         body { font-family: 'Poppins', 'Noto Sans HK', sans-serif; background-color: var(--bg-warm-gray); margin: 0; padding: 0; color: var(--text-main); padding-bottom: 40px; }
 
         header { background-color: var(--card-bg); padding: 15px 25px; box-shadow: var(--shadow-md); border-bottom: 3px solid var(--accent-gold); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
-        .logo-area { display: flex; align-items: center; gap: 15px; }
+        
+        /* 🔥 新增 Logo 區域的點擊樣式 */
+        .logo-area { display: flex; align-items: center; gap: 15px; cursor: pointer; transition: opacity 0.2s ease; }
+        .logo-area:hover { opacity: 0.8; }
+        
         .logo-area img { height: 55px; width: auto; border-radius: var(--radius-sm); }
         .logo-area span { font-weight: 700; font-size: 1.3rem; color: var(--primary-burgundy); letter-spacing: -0.5px; }
 
@@ -137,7 +141,7 @@
     </div>
 
     <header>
-        <div class="logo-area">
+        <div class="logo-area" onclick="switchTab('front')">
             <img src="Company logo.jpeg" alt="Company Logo" onerror="this.src='https://via.placeholder.com/150x50?text=Logo+NotFound'">
             <span>65th Annual Lunch</span>
         </div>
@@ -251,7 +255,6 @@
                 });
         }
 
-        // 修改為 Promise 形式，方便逐一刪除時使用
         function updateCloudData(engName, chiName, signInTime) {
             return fetch(WEB_APP_URL, {
                 method: 'POST',
@@ -303,7 +306,6 @@
                 const timeStr = new Date().toLocaleString('zh-HK');
                 guest['SignInTime'] = timeStr; 
                 
-                // 發送至雲端 (不阻擋畫面)
                 updateCloudData(guest['English Name'] || "", guest['Chinese Name'] || "", timeStr).catch(e => console.error(e));
                 
                 showAlert(`✅ 簽到成功！歡迎 <strong>${getDisplayName(guest)}</strong>，桌號：<strong>${guest['Table No.'] || '未分配'}</strong>`, "#15803D", "#D1FAE5");
@@ -323,7 +325,6 @@
             
             signedInGuests.forEach(guest => {
                 const li = document.createElement('li');
-                // 👇 加入 Checkbox 讓你可以獨立選取刪除
                 li.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 15px;">
                         <input type="checkbox" class="checkin-checkbox" data-eng="${encodeURIComponent(guest['English Name'] || '')}" data-chi="${encodeURIComponent(guest['Chinese Name'] || '')}">
@@ -335,25 +336,13 @@
             });
         }
 
-        // --- 👇 新增的刪除功能邏輯 👇 ---
-        function selectAllCheckins() {
-            document.querySelectorAll('.checkin-checkbox').forEach(cb => cb.checked = true);
-        }
-
-        function deselectAllCheckins() {
-            document.querySelectorAll('.checkin-checkbox').forEach(cb => cb.checked = false);
-        }
+        function selectAllCheckins() { document.querySelectorAll('.checkin-checkbox').forEach(cb => cb.checked = true); }
+        function deselectAllCheckins() { document.querySelectorAll('.checkin-checkbox').forEach(cb => cb.checked = false); }
 
         async function deleteSelectedCheckins() {
             const checkboxes = document.querySelectorAll('.checkin-checkbox:checked');
-            if (checkboxes.length === 0) {
-                alert("請先在名單左側勾選要取消簽到的來賓！");
-                return;
-            }
-
-            if (!confirm(`⚠️ 確定要取消這 ${checkboxes.length} 位來賓的簽到紀錄嗎？\n(這將會同時清除 Google Sheet 上的時間)`)) {
-                return;
-            }
+            if (checkboxes.length === 0) { alert("請先在名單左側勾選要取消簽到的來賓！"); return; }
+            if (!confirm(`⚠️ 確定要取消這 ${checkboxes.length} 位來賓的簽到紀錄嗎？\n(這將會同時清除 Google Sheet 上的時間)`)) return;
 
             const loader = document.getElementById('loader');
             const loaderText = document.getElementById('loader-text');
@@ -363,27 +352,20 @@
             for (let cb of checkboxes) {
                 count++;
                 loaderText.textContent = `正在刪除簽到紀錄 (${count}/${checkboxes.length})...`;
-                
                 const eng = decodeURIComponent(cb.getAttribute('data-eng'));
                 const chi = decodeURIComponent(cb.getAttribute('data-chi'));
                 
-                // 1. 本地清空
                 const guest = guestDatabase.find(g => (g['English Name'] || "").toString() === eng && (g['Chinese Name'] || "").toString() === chi);
                 if (guest) guest['SignInTime'] = "";
                 
-                // 2. 雲端清空 (寫入空字串)
-                try {
-                    await updateCloudData(eng, chi, "");
-                } catch (e) {
-                    console.error("Delete failed for", eng, chi);
-                }
+                try { await updateCloudData(eng, chi, ""); } 
+                catch (e) { console.error("Delete failed for", eng, chi); }
             }
 
             loader.style.display = 'none';
-            renderSignedInList(); // 重新渲染畫面
+            renderSignedInList(); 
             alert(`✅ 已成功取消 ${checkboxes.length} 位來賓的簽到紀錄！`);
         }
-        // --- 👆 刪除功能邏輯結束 👆 ---
 
         function switchTab(tabId) {
             if (tabId === 'back' && !isAdminLoggedIn) { document.getElementById('loginModal').style.display = 'flex'; return; }
@@ -407,10 +389,7 @@
 
         function exportExcel() {
             const signedInGuests = guestDatabase.filter(g => g['SignInTime'] && g['SignInTime'].toString().trim() !== "");
-            if (signedInGuests.length === 0) {
-                alert("目前沒有已簽到的來賓可匯出。");
-                return;
-            }
+            if (signedInGuests.length === 0) { alert("目前沒有已簽到的來賓可匯出。"); return; }
             const worksheet = XLSX.utils.json_to_sheet(signedInGuests);
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, "已簽到名單");
