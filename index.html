@@ -58,8 +58,8 @@
         .nav-btns button:hover:not(.active) { color: var(--primary-burgundy); }
         .nav-btns button.active { background-color: var(--primary-burgundy); color: white; box-shadow: 0 4px 6px rgba(128, 0, 0, 0.2); }
         
-        /* 內容容器 */
-        .container { max-width: 850px; margin: 30px auto; padding: 30px; background: var(--card-bg); border-radius: var(--radius-md); box-shadow: var(--shadow-md); }
+        /* 內容容器 (已加寬以容納左右兩欄) */
+        .container { max-width: 1100px; margin: 30px auto; padding: 30px; background: var(--card-bg); border-radius: var(--radius-md); box-shadow: var(--shadow-md); }
 
         /* 分頁切換與動畫 */
         .tab-content { display: none; }
@@ -70,8 +70,16 @@
         h3 { font-weight: 600; color: var(--text-main); margin-top: 25px; }
         p { color: var(--text-light); line-height: 1.6; }
         
+        /* 🔥 首頁左右雙欄佈局 */
+        .front-layout { display: flex; gap: 40px; align-items: flex-start; }
+        .front-left { flex: 1.1; min-width: 0; }
+        .front-right { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+        /* 搜尋框包裹層 (確保懸浮列表對齊) */
+        .search-wrapper { position: relative; width: 100%; margin-top: 10px; }
+        
         /* 表單元件 */
-        input[type="text"], input[type="password"] { width: 100%; padding: 15px 20px; margin: 10px 0 0 0; border: 2px solid #E5E7EB; border-radius: var(--radius-full); box-sizing: border-box; font-size: 1rem; transition: all 0.3s ease; background-color: #F9FAFB; }
+        input[type="text"], input[type="password"] { width: 100%; padding: 15px 20px; border: 2px solid #E5E7EB; border-radius: var(--radius-full); box-sizing: border-box; font-size: 1rem; transition: all 0.3s ease; background-color: #F9FAFB; }
         input[type="text"]:focus, input[type="password"]:focus { border-color: var(--accent-gold); background-color: white; outline: none; box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1); }
         input[type="file"] { margin: 15px 0; color: var(--text-light); font-size: 0.9rem; }
         
@@ -87,11 +95,11 @@
         button.btn-logout:hover { background-color: #F3F4F6; color: var(--danger-red); border-color: var(--danger-red); }
 
         /* 座位表圖片區 */
-        .seating-plan { width: 100%; text-align: center; margin-bottom: 25px; border: 2px dashed #D1D5DB; border-radius: var(--radius-md); padding: 15px; background-color: #F9FAFB; }
+        .seating-plan { width: 100%; text-align: center; border: 2px dashed #D1D5DB; border-radius: var(--radius-md); padding: 15px; background-color: #F9FAFB; }
         .seating-plan img { max-width: 100%; height: auto; border-radius: var(--radius-sm); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         
-        /* Smart Search 結果列表 */
-        .search-results-container { max-height: 380px; overflow-y: auto; border: none; border-radius: var(--radius-md); background: white; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1); display: none; margin-top: 10px; position: absolute; width: calc(100% - 60px); z-index: 50; }
+        /* Smart Search 結果列表 (依附在 search-wrapper 之下) */
+        .search-results-container { max-height: 380px; overflow-y: auto; border: none; border-radius: var(--radius-md); background: white; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15); display: none; margin-top: 8px; position: absolute; width: 100%; top: 100%; left: 0; z-index: 50; }
         .search-result-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #F3F4F6; }
         .search-result-item:hover { background-color: rgba(212, 175, 55, 0.05); }
         .guest-info strong { font-size: 1.15rem; color: var(--text-main); }
@@ -111,18 +119,15 @@
         .status-badge { background-color: var(--success-green); color: white; padding: 5px 12px; border-radius: var(--radius-full); font-size: 0.8rem; font-weight: 700; white-space: nowrap; }
 
         /* 登入 Modal 樣式 */
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(4px); z-index: 1000;
-            justify-content: center; align-items: center;
-        }
-        .modal-content {
-            background: var(--card-bg); padding: 35px 30px; border-radius: var(--radius-md);
-            width: 90%; max-width: 400px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            text-align: center; animation: slideInDown 0.3s ease;
-        }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: var(--card-bg); padding: 35px 30px; border-radius: var(--radius-md); width: 90%; max-width: 400px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); text-align: center; animation: slideInDown 0.3s ease; }
         .modal-error { color: var(--danger-red); font-size: 0.95rem; font-weight: 600; display: none; margin-bottom: 15px; }
         .modal-btns { display: flex; gap: 10px; margin-top: 25px; }
+
+        /* 平板與手機版適配 (自動切回上下排列) */
+        @media (max-width: 850px) {
+            .front-layout { flex-direction: column; gap: 25px; }
+        }
 
         @media (max-width: 600px) {
             header { flex-direction: column; gap: 15px; padding: 15px; text-align: center;}
@@ -136,7 +141,6 @@
             .status-badge { align-self: flex-start; }
             .search-result-item { flex-direction: column; align-items: flex-start; gap: 12px; }
             .btn-checkin, .btn-signed { width: 100%; padding: 12px; }
-            .search-results-container { width: calc(100% - 40px); }
         }
     </style>
 </head>
@@ -153,21 +157,31 @@
         </div>
     </header>
 
-    <div id="front" class="container tab-content active" style="position: relative;">
-        <h2>座位表參考 (Seating Plan)</h2>
-        <div class="seating-plan">
-            <img src="Seating plan.jpeg" alt="Seating Plan" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-            <span style="display:none; color: var(--danger-red); padding: 20px;">無法載入 Seating plan.jpeg，請核對檔案名稱。</span>
-        </div>
+    <div id="front" class="container tab-content active">
+        <div class="front-layout">
+            
+            <div class="front-left">
+                <h2 style="margin-top: 0;">座位表參考 (Seating Plan)</h2>
+                <div class="seating-plan">
+                    <img src="Seating plan.jpeg" alt="Seating Plan" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <span style="display:none; color: var(--danger-red); padding: 20px;">無法載入 Seating plan.jpeg，請核對檔案名稱。</span>
+                </div>
+            </div>
 
-        <h2>來賓簽到 (Check-in)</h2>
-        <p style="margin-bottom:8px;">接待員請輸入來賓姓名片段，下方將自動列出符合的名單：</p>
-        
-        <input type="text" id="searchInput" placeholder="輸入姓名尋找 (Chan, Lee, 陳大文...)" oninput="handleLiveSearch()" autocomplete="off">
-        
-        <div id="searchResults" class="search-results-container"></div>
-        <div id="signInAlert"></div>
-    </div>
+            <div class="front-right">
+                <h2 style="margin-top: 0;">來賓簽到 (Check-in)</h2>
+                <p style="margin-bottom:8px;">接待員請輸入來賓姓名片段，下方將自動列出符合的名單：</p>
+                
+                <div class="search-wrapper">
+                    <input type="text" id="searchInput" placeholder="輸入姓名尋找 (Chan, Lee, 陳大文...)" oninput="handleLiveSearch()" autocomplete="off">
+                    <div id="searchResults" class="search-results-container"></div>
+                </div>
+                
+                <div id="signInAlert"></div>
+            </div>
+            
+        </div>
+        </div>
 
     <div id="back" class="container tab-content">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
