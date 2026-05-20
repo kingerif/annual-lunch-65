@@ -105,6 +105,9 @@
         .list-group li { padding: 15px 20px; background-color: #F9FAFB; border: 1px solid #E5E7EB; margin-bottom: 8px; border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center; transition: all 0.2s ease; }
         .status-badge { background-color: var(--success-green); color: white; padding: 5px 12px; border-radius: var(--radius-full); font-size: 0.8rem; font-weight: 700; white-space: nowrap; }
 
+        /* Custom Checkbox Style */
+        .checkin-checkbox { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary-burgundy); }
+
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center; }
         .modal-content { background: var(--card-bg); padding: 35px 30px; border-radius: var(--radius-md); width: 90%; max-width: 400px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); text-align: center; animation: slideInDown 0.3s ease; }
         .modal-error { color: var(--danger-red); font-size: 0.95rem; font-weight: 600; display: none; margin-bottom: 15px; }
@@ -119,7 +122,7 @@
             header { flex-direction: column; gap: 15px; padding: 15px; text-align: center;}
             .nav-btns { width: 100%; justify-content: center; flex-wrap: wrap; gap: 10px;}
             .container { padding: 20px; margin: 15px auto; width: calc(100% - 30px); }
-            .list-group li { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .list-group li { flex-direction: column; align-items: flex-start; gap: 12px; }
             .status-badge { align-self: flex-start; }
             .search-result-item { flex-direction: column; align-items: flex-start; gap: 12px; }
             .btn-checkin, .btn-signed { width: 100%; padding: 12px; }
@@ -130,7 +133,7 @@
 
     <div id="loader" class="loader-overlay">
         <div class="spinner"></div>
-        <div style="font-weight: 600; color: var(--primary-burgundy);">正在與 Google Sheets 同步資料...</div>
+        <div id="loader-text" style="font-weight: 600; color: var(--primary-burgundy);">正在與 Google Sheets 同步資料...</div>
     </div>
 
     <header>
@@ -152,7 +155,7 @@
     <div id="front" class="container tab-content active">
         <div class="front-layout">
             <div class="front-left">
-                <h2 style="margin-top: 0;">座位表參考 (Seating Plan)</h2>
+                <h2>座位表參考 (Seating Plan)</h2>
                 <div class="seating-plan">
                     <img src="Seating plan.jpeg" alt="Seating Plan" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                     <span style="display:none; color: var(--danger-red); padding: 20px;">無法載入 Seating plan.jpeg</span>
@@ -160,7 +163,7 @@
             </div>
 
             <div class="front-right">
-                <h2 style="margin-top: 0;">來賓簽到 (Check-in)</h2>
+                <h2>來賓簽到 (Check-in)</h2>
                 <p style="margin-bottom:8px;">接待員請輸入來賓姓名片段，下方將自動列出符合的名單：</p>
                 
                 <div class="search-wrapper">
@@ -183,7 +186,18 @@
         </div>
         
         <h2>2. 已簽到名單總覽</h2>
-        <h3>簽到紀錄 (已簽到: <span id="signCount" style="color:var(--success-green); font-size:1.3rem;">0</span> 人)</h3>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 15px;">
+            <button class="btn btn-success" style="width: auto; margin: 0; padding: 10px 20px; font-size: 0.95rem;" onclick="exportExcel()">📥 匯出 Excel</button>
+            
+            <div style="display: flex; gap: 8px;">
+                <button class="btn-secondary" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #D1D5DB; background: #F9FAFB; cursor: pointer; font-size: 0.9rem;" onclick="selectAllCheckins()">☑️ 全選</button>
+                <button class="btn-secondary" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #D1D5DB; background: #F9FAFB; cursor: pointer; font-size: 0.9rem;" onclick="deselectAllCheckins()">☐ 取消全選</button>
+                <button class="btn-secondary" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #EF4444; color: #EF4444; background: #FEF2F2; cursor: pointer; font-size: 0.9rem; font-weight: bold;" onclick="deleteSelectedCheckins()">🗑️ 刪除已選取</button>
+            </div>
+        </div>
+
+        <h3 style="margin-top: 5px;">簽到紀錄 (已簽到: <span id="signCount" style="color:var(--success-green); font-size:1.3rem;">0</span> 人)</h3>
         <ul id="signedInList" class="list-group"></ul>
     </div>
 
@@ -203,6 +217,7 @@
 
     <script>
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwtRWHx-zyrQhr9fC5r0Vo5jv3eHf_UIU14C12dxX_NXYitQ5J1lKwMWXLA3P3Vb-FIIQ/exec"; 
+        
         let guestDatabase = []; 
         let isAdminLoggedIn = sessionStorage.getItem('adminAuth') === 'true';
 
@@ -215,6 +230,7 @@
             
             syncBtn.classList.add('syncing');
             loader.style.display = 'flex';
+            document.getElementById('loader-text').textContent = "正在與 Google Sheets 同步資料...";
             searchInput.disabled = true;
 
             fetch(WEB_APP_URL)
@@ -235,8 +251,9 @@
                 });
         }
 
+        // 修改為 Promise 形式，方便逐一刪除時使用
         function updateCloudData(engName, chiName, signInTime) {
-            fetch(WEB_APP_URL, {
+            return fetch(WEB_APP_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify({ engName: engName, chiName: chiName, time: signInTime })
@@ -285,7 +302,10 @@
             if (guest) {
                 const timeStr = new Date().toLocaleString('zh-HK');
                 guest['SignInTime'] = timeStr; 
-                updateCloudData(guest['English Name'] || "", guest['Chinese Name'] || "", timeStr);
+                
+                // 發送至雲端 (不阻擋畫面)
+                updateCloudData(guest['English Name'] || "", guest['Chinese Name'] || "", timeStr).catch(e => console.error(e));
+                
                 showAlert(`✅ 簽到成功！歡迎 <strong>${getDisplayName(guest)}</strong>，桌號：<strong>${guest['Table No.'] || '未分配'}</strong>`, "#15803D", "#D1FAE5");
                 renderSignedInList();
                 document.getElementById('searchInput').value = "";
@@ -300,12 +320,70 @@
             const signedInGuests = guestDatabase.filter(g => g['SignInTime'] && g['SignInTime'].toString().trim() !== "");
             signedInGuests.sort((a, b) => new Date(b.SignInTime) - new Date(a.SignInTime));
             document.getElementById('signCount').textContent = signedInGuests.length;
+            
             signedInGuests.forEach(guest => {
                 const li = document.createElement('li');
-                li.innerHTML = `<span><strong style="color:#111827;">${getDisplayName(guest)}</strong><small style="margin-left:10px;">(桌號: ${guest['Table No.'] || 'N/A'})</small></span><span class="status-badge">已簽到 ${guest['SignInTime'].split(' ')[1]}</span>`;
+                // 👇 加入 Checkbox 讓你可以獨立選取刪除
+                li.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <input type="checkbox" class="checkin-checkbox" data-eng="${encodeURIComponent(guest['English Name'] || '')}" data-chi="${encodeURIComponent(guest['Chinese Name'] || '')}">
+                        <span><strong style="color:#111827;">${getDisplayName(guest)}</strong><small style="margin-left:10px;">(桌號: ${guest['Table No.'] || 'N/A'})</small></span>
+                    </div>
+                    <span class="status-badge">已簽到 ${guest['SignInTime'].split(' ')[1] || guest['SignInTime']}</span>
+                `;
                 list.appendChild(li);
             });
         }
+
+        // --- 👇 新增的刪除功能邏輯 👇 ---
+        function selectAllCheckins() {
+            document.querySelectorAll('.checkin-checkbox').forEach(cb => cb.checked = true);
+        }
+
+        function deselectAllCheckins() {
+            document.querySelectorAll('.checkin-checkbox').forEach(cb => cb.checked = false);
+        }
+
+        async function deleteSelectedCheckins() {
+            const checkboxes = document.querySelectorAll('.checkin-checkbox:checked');
+            if (checkboxes.length === 0) {
+                alert("請先在名單左側勾選要取消簽到的來賓！");
+                return;
+            }
+
+            if (!confirm(`⚠️ 確定要取消這 ${checkboxes.length} 位來賓的簽到紀錄嗎？\n(這將會同時清除 Google Sheet 上的時間)`)) {
+                return;
+            }
+
+            const loader = document.getElementById('loader');
+            const loaderText = document.getElementById('loader-text');
+            loader.style.display = 'flex';
+            
+            let count = 0;
+            for (let cb of checkboxes) {
+                count++;
+                loaderText.textContent = `正在刪除簽到紀錄 (${count}/${checkboxes.length})...`;
+                
+                const eng = decodeURIComponent(cb.getAttribute('data-eng'));
+                const chi = decodeURIComponent(cb.getAttribute('data-chi'));
+                
+                // 1. 本地清空
+                const guest = guestDatabase.find(g => (g['English Name'] || "").toString() === eng && (g['Chinese Name'] || "").toString() === chi);
+                if (guest) guest['SignInTime'] = "";
+                
+                // 2. 雲端清空 (寫入空字串)
+                try {
+                    await updateCloudData(eng, chi, "");
+                } catch (e) {
+                    console.error("Delete failed for", eng, chi);
+                }
+            }
+
+            loader.style.display = 'none';
+            renderSignedInList(); // 重新渲染畫面
+            alert(`✅ 已成功取消 ${checkboxes.length} 位來賓的簽到紀錄！`);
+        }
+        // --- 👆 刪除功能邏輯結束 👆 ---
 
         function switchTab(tabId) {
             if (tabId === 'back' && !isAdminLoggedIn) { document.getElementById('loginModal').style.display = 'flex'; return; }
@@ -326,6 +404,18 @@
         function showAlert(msg, color, bgColor) { const alertDiv = document.getElementById('signInAlert'); alertDiv.innerHTML = msg; alertDiv.style.color = color; alertDiv.style.backgroundColor = bgColor; alertDiv.style.display = "block"; }
         function hideAlert() { document.getElementById('signInAlert').style.display = "none"; }
         function closeLoginModal() { document.getElementById('loginModal').style.display = 'none'; }
+
+        function exportExcel() {
+            const signedInGuests = guestDatabase.filter(g => g['SignInTime'] && g['SignInTime'].toString().trim() !== "");
+            if (signedInGuests.length === 0) {
+                alert("目前沒有已簽到的來賓可匯出。");
+                return;
+            }
+            const worksheet = XLSX.utils.json_to_sheet(signedInGuests);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "已簽到名單");
+            XLSX.writeFile(workbook, "已簽到名單_65th_Annual_Lunch.xlsx");
+        }
     </script>
 </body>
 </html>
