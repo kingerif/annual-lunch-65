@@ -117,13 +117,21 @@
         .spinner { border: 4px solid rgba(0,0,0,0.1); width: 40px; height: 40px; border-radius: 50%; border-left-color: var(--primary-burgundy); animation: spin 1s linear infinite; margin-bottom: 15px;}
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* 🔥 各桌未到名單卡片樣式 */
+        /* 🔥 各桌全名單卡片樣式更新 🔥 */
         .table-status-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
         .table-card { background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: var(--radius-md); padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
         .table-card-header { font-weight: 700; color: var(--primary-burgundy); border-bottom: 2px solid var(--accent-gold); padding-bottom: 10px; margin-bottom: 12px; font-size: 1.15rem; display: flex; justify-content: space-between; align-items: center; }
-        .missing-guest { color: var(--danger-red); font-size: 0.95rem; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; font-weight: 600; }
-        .missing-guest::before { content: ''; display: inline-block; width: 6px; height: 6px; background-color: var(--danger-red); border-radius: 50%; }
-        .all-arrived { color: var(--success-green); font-weight: 700; font-size: 1rem; display: flex; align-items: center; gap: 5px; padding: 10px 0; }
+        
+        .guest-list-item { font-size: 0.95rem; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; font-weight: 600; }
+        .guest-list-item .name-part { display: flex; align-items: center; gap: 8px; }
+        
+        .guest-missing { color: var(--danger-red); }
+        .guest-missing .name-part::before { content: ''; display: inline-block; width: 6px; height: 6px; background-color: var(--danger-red); border-radius: 50%; }
+        
+        .guest-arrived { color: var(--success-green); }
+        .guest-arrived .name-part::before { content: '✓'; display: inline-block; font-weight: bold; }
+        
+        .guest-time { font-size: 0.75rem; color: #9CA3AF; font-weight: normal; }
 
         @media (max-width: 850px) { .front-layout { flex-direction: column; gap: 25px; } }
         @media (max-width: 600px) {
@@ -156,8 +164,8 @@
             </button>
             <div class="nav-btns-group">
                 <button id="btn-front" class="active" onclick="switchTab('front')">首頁</button>
-                <button id="btn-tables" onclick="switchTab('tables')">未到名單</button>
                 <button id="btn-back" onclick="switchTab('back')">登入</button>
+                <button id="btn-tables" onclick="switchTab('tables')" style="display: none;">各桌名單</button>
             </div>
         </div>
     </header>
@@ -188,13 +196,12 @@
 
     <div id="tables" class="container tab-content">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <h2 style="margin-bottom: 0;">各桌未到名單狀態</h2>
+            <h2 style="margin-bottom: 0;">各桌全名單報到狀態</h2>
             <button class="btn-logout" onclick="handleLogout()">🔒 登出系統</button>
         </div>
-        <p style="color: var(--text-light); margin-top: 0; margin-bottom: 20px;">實時顯示各桌尚未報到的來賓，已到齊的桌次將標示綠色。</p>
+        <p style="color: var(--text-light); margin-top: 0; margin-bottom: 20px;">實時顯示各桌所有人名單：<span style="color: var(--success-green); font-weight: bold;">綠色</span>代表已簽到 (附時間)，<span style="color: var(--danger-red); font-weight: bold;">紅色</span>代表未到。</p>
         
-        <div id="tableStatusContainer" class="table-status-grid">
-            </div>
+        <div id="tableStatusContainer" class="table-status-grid"></div>
     </div>
 
     <div id="back" class="container tab-content">
@@ -239,9 +246,21 @@
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwtRWHx-zyrQhr9fC5r0Vo5jv3eHf_UIU14C12dxX_NXYitQ5J1lKwMWXLA3P3Vb-FIIQ/exec"; 
         let guestDatabase = []; 
         let isAdminLoggedIn = sessionStorage.getItem('adminAuth') === 'true';
-        let intendedTab = 'back'; // 用來記住登入後要去哪個 tab
+        let intendedTab = 'back'; 
 
-        window.onload = () => fetchCloudData();
+        window.onload = () => {
+            fetchCloudData();
+            toggleAdminButtons();
+        };
+
+        function toggleAdminButtons() {
+            const tablesBtn = document.getElementById('btn-tables');
+            if (isAdminLoggedIn) {
+                tablesBtn.style.display = 'inline-block';
+            } else {
+                tablesBtn.style.display = 'none';
+            }
+        }
 
         function fetchCloudData() {
             const syncBtn = document.getElementById('btn-sync');
@@ -258,7 +277,7 @@
                 .then(data => {
                     guestDatabase = data;
                     renderSignedInList(); 
-                    renderTableStatus(); // 🔥 同步更新未到名單
+                    renderTableStatus(); 
                     
                     loader.style.display = 'none';
                     syncBtn.classList.remove('syncing');
@@ -329,7 +348,7 @@
                 showAlert(`✅ 簽到成功！歡迎 <strong>${getDisplayName(guest)}</strong>，桌號：<strong>${guest['Table No.'] || '未分配'}</strong>`, "#15803D", "#D1FAE5");
                 
                 renderSignedInList();
-                renderTableStatus(); // 🔥 同步更新未到名單
+                renderTableStatus(); 
                 
                 document.getElementById('searchInput').value = "";
                 document.getElementById('searchResults').style.display = "none";
@@ -357,7 +376,7 @@
             });
         }
 
-        // 🔥 新增：生成各桌未到名單卡片 🔥
+        // 🔥 更新：渲染包含全名單及時間的卡片 🔥
         function renderTableStatus() {
             const container = document.getElementById('tableStatusContainer');
             if (!container) return;
@@ -365,20 +384,27 @@
 
             const tablesData = {};
             
-            // 分類與計算
             guestDatabase.forEach(guest => {
                 const tableNo = guest['Table No.'] || guest['Table Number'] || '未分配';
-                if (!tablesData[tableNo]) tablesData[tableNo] = { total: 0, missing: [] };
+                if (!tablesData[tableNo]) tablesData[tableNo] = { total: 0, missingCount: 0, guests: [] };
                 
                 tablesData[tableNo].total++;
                 
-                const alreadySigned = (guest['SignInTime'] && guest['SignInTime'].toString().trim() !== "");
+                const timeStr = guest['SignInTime'] ? guest['SignInTime'].toString().trim() : "";
+                const alreadySigned = timeStr !== "";
+                
                 if (!alreadySigned) {
-                    tablesData[tableNo].missing.push(getDisplayName(guest));
+                    tablesData[tableNo].missingCount++;
                 }
+
+                // 儲存每位客人的狀態
+                tablesData[tableNo].guests.push({
+                    name: getDisplayName(guest),
+                    signedIn: alreadySigned,
+                    time: timeStr ? (timeStr.split(' ')[1] || timeStr) : "" // 擷取時間部分
+                });
             });
 
-            // 桌號自然排序 (1, 2, 3, 10...)
             const sortedTableNos = Object.keys(tablesData).sort((a, b) => {
                 const numA = parseInt(a);
                 const numB = parseInt(b);
@@ -386,29 +412,35 @@
                 return a.localeCompare(b);
             });
 
-            // 產生卡片
             sortedTableNos.forEach(tableNo => {
                 const data = tablesData[tableNo];
                 const card = document.createElement('div');
                 card.className = 'table-card';
                 
-                // 標題 (顯示欠幾多人)
                 let html = `
                     <div class="table-card-header">
                         <span>桌號: ${tableNo}</span>
                         <span style="font-size: 0.85rem; color: #6B7280; font-weight: normal; background: white; padding: 2px 8px; border-radius: 12px; border: 1px solid #E5E7EB;">
-                            欠 ${data.missing.length} / ${data.total} 人
+                            欠 ${data.missingCount} / ${data.total} 人
                         </span>
                     </div>
                 `;
                 
-                if (data.missing.length === 0) {
-                    html += `<div class="all-arrived">✅ 全桌已到齊</div>`;
-                } else {
-                    data.missing.forEach(name => {
-                        html += `<div class="missing-guest">${name}</div>`;
-                    });
-                }
+                // 顯示所有人名單 (綠色打剔+時間，或紅色圓點)
+                data.guests.forEach(g => {
+                    if (g.signedIn) {
+                        html += `
+                        <div class="guest-list-item guest-arrived">
+                            <div class="name-part">${g.name}</div>
+                            <div class="guest-time">${g.time}</div>
+                        </div>`;
+                    } else {
+                        html += `
+                        <div class="guest-list-item guest-missing">
+                            <div class="name-part">${g.name}</div>
+                        </div>`;
+                    }
+                });
                 
                 card.innerHTML = html;
                 container.appendChild(card);
@@ -443,14 +475,13 @@
 
             loader.style.display = 'none';
             renderSignedInList(); 
-            renderTableStatus(); // 🔥 同步更新未到名單
+            renderTableStatus(); 
             alert(`✅ 已成功取消 ${checkboxes.length} 位來賓的簽到紀錄！`);
         }
 
-        // 修改 SwitchTab 以支援多個需登入的頁面
         function switchTab(tabId) {
             if ((tabId === 'back' || tabId === 'tables') && !isAdminLoggedIn) { 
-                intendedTab = tabId; // 記住想去邊個 tab
+                intendedTab = tabId; 
                 document.getElementById('loginModal').style.display = 'flex'; 
                 document.getElementById('adminUser').focus();
                 return; 
@@ -472,11 +503,19 @@
             if (document.getElementById('adminUser').value === 'admin' && document.getElementById('adminPass').value === 'Abcd1234') {
                 isAdminLoggedIn = true; sessionStorage.setItem('adminAuth', 'true');
                 document.getElementById('loginModal').style.display = 'none'; 
-                switchTab(intendedTab); // 登入成功後去返想去嗰頁
+                toggleAdminButtons(); 
+                switchTab(intendedTab); 
             } else { document.getElementById('loginError').style.display = 'block'; }
         }
 
-        function handleLogout() { isAdminLoggedIn = false; sessionStorage.removeItem('adminAuth'); switchTab('front'); }
+        function handleLogout() { 
+            isAdminLoggedIn = false; 
+            sessionStorage.removeItem('adminAuth'); 
+            toggleAdminButtons(); 
+            switchTab('front'); 
+            alert("已登出系統，系統已鎖定。"); 
+        }
+        
         function showAlert(msg, color, bgColor) { const alertDiv = document.getElementById('signInAlert'); alertDiv.innerHTML = msg; alertDiv.style.color = color; alertDiv.style.backgroundColor = bgColor; alertDiv.style.display = "block"; }
         function hideAlert() { document.getElementById('signInAlert').style.display = "none"; }
         function closeLoginModal() { document.getElementById('loginModal').style.display = 'none'; }
