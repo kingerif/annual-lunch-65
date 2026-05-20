@@ -133,12 +133,13 @@
         .guest-arrived { color: var(--success-green); }
         .guest-time { font-size: 0.82rem !important; color: #9CA3AF; font-weight: normal !important; text-align: left !important; }
 
-        /* 🔥 全螢幕巨大化桌號彈出特效 🔥 */
+        /* 🔥 全螢幕巨大化桌號特效 (無圖片版) 🔥 */
         .massive-table-overlay { 
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
             background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(5px);
             z-index: 10000; display: flex; justify-content: center; align-items: center; 
             opacity: 0; pointer-events: none; transition: opacity 0.3s ease; 
+            cursor: pointer; /* 提示可以點擊關閉 */
         }
         .massive-table-overlay.show { opacity: 1; pointer-events: auto; }
         .massive-table-content { 
@@ -150,7 +151,7 @@
         }
         .massive-table-overlay.show .massive-table-content { transform: scale(1); }
         .massive-title { font-size: 2.5rem; display: block; margin-bottom: 10px; font-weight: 600; color: #fff; letter-spacing: 2px; }
-        #massiveTableNo { font-size: 9rem; font-weight: 700; line-height: 1; text-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        #massiveTableNo { font-size: 9rem; font-weight: 700; line-height: 1; text-shadow: 0 10px 20px rgba(0,0,0,0.3); display: block; }
 
         @media (max-width: 850px) { .front-layout { flex-direction: column; gap: 25px; } }
         @media (max-width: 600px) {
@@ -363,7 +364,6 @@
             });
         }
 
-        // 🔥 簽到函數更新：加入全螢幕巨大化特效 🔥
         function signInSpecificGuest(engNameEnc, chiNameEnc) {
             const engName = decodeURIComponent(engNameEnc);
             const chiName = decodeURIComponent(chiNameEnc);
@@ -376,10 +376,9 @@
                 
                 updateCloudData(guest['English Name'] || "", guest['Chinese Name'] || "", timeStr).catch(e => console.error(e));
                 
-                // 1. 觸發全螢幕巨大桌號動畫
+                // 🔥 觸發大字彈出特效 (無圖片版) 🔥
                 showMassiveTableOverlay(tableNo);
                 
-                // 2. 顯示綠色成功框
                 showAlert(`✅ 簽到成功！歡迎 <strong>${getDisplayName(guest)}</strong>，桌號：<strong>${tableNo}</strong>`, "#15803D", "#D1FAE5");
                 
                 renderSignedInList();
@@ -391,16 +390,22 @@
             }
         }
 
-        // 🔥 播放特效的專屬 Function
+        // 🔥 退回無圖片版：只顯示桌號文字，停留 2.5 秒 🔥
         function showMassiveTableOverlay(tableNo) {
             const overlay = document.getElementById('massiveTableOverlay');
             document.getElementById('massiveTableNo').textContent = tableNo;
+            
             overlay.classList.add('show');
             
-            // 2.5 秒後自動隱藏
+            // 點擊畫面任何地方即刻隱藏
+            overlay.onclick = () => {
+                overlay.classList.remove('show');
+            };
+            
+            // 2.5 秒後自動消失
             setTimeout(() => {
                 overlay.classList.remove('show');
-            }, 2500);
+            }, 5000);
         }
 
         function renderSignedInList() {
