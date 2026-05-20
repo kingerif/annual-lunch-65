@@ -3,135 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>活動簽到與後台管理系統</title>
+    <title>65th Annual Lunch - 活動簽到與後台管理系統</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+HK:wght@400;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
-            --primary: #4F46E5;
-            --bg-color: #F3F4F6;
-            --box-bg: #FFFFFF;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            margin: 0;
-            padding: 0;
-            color: #333;
-        }
-        /* 導覽列與 Logo */
-        header {
-            background-color: var(--box-bg);
-            padding: 15px 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-        /* 已套用你提供的 Logo 檔案名稱 */
-        .logo-area img {
-            height: 50px; /* 可根據你的 logo 比例微調 */
-            width: auto;
-            border-radius: 4px;
-        }
-        .nav-btns button {
-            padding: 8px 16px;
-            margin-left: 10px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            background-color: #E5E7EB;
-            font-weight: bold;
-            transition: 0.2s;
-        }
-        .nav-btns button.active {
-            background-color: var(--primary);
-            color: white;
-        }
-        
-        /* 內容區域 */
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background: var(--box-bg);
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        
-        /* 表單與按鈕 */
-        input[type="text"], input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            box-sizing: border-box;
-        }
-        button.btn {
-            background-color: var(--primary);
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            width: 100%;
-            font-size: 1rem;
-        }
-        button.btn-danger { background-color: #EF4444; }
-        button.btn-success { background-color: #10B981; margin-top:10px; }
-        
-        /* 座位表圖片區 - 已優化顯示 */
-        .seating-plan {
-            width: 100%;
-            text-align: center;
-            margin-bottom: 20px;
-            border: 1px solid #E5E7EB;
-            border-radius: 8px;
-            padding: 10px;
-            box-sizing: border-box;
-        }
-        .seating-plan img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 4px;
-        }
-        
-        /* 列表 */
-        .list-group {
-            list-style: none;
-            padding: 0;
-        }
-        .list-group li {
-            padding: 12px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .status-badge {
-            background-color: #10B981;
-            color: white;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            white-space: nowrap;
+            --primary-burgundy: #800000;
+            --primary-hover: #A52A2A;
+            --accent-gold: #D4AF37;
+            --bg-warm-gray: #FDFCFB;
+            --card-bg: #FFFFFF;
+            --text-main: #1F2937;
+            --text-light: #6B7280;
+            --success-green: #15803D;
+            --danger-red: #DC2626;
+            
+            --radius-full: 9999px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --shadow-md: 0 10px 15px -3px rgba(128, 0, 0, 0.05), 0 4px 6px -2px rgba(128, 0, 0, 0.03);
         }
 
-        /* 手機版適配 */
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: 'Poppins', 'Noto Sans HK', sans-serif;
+            background-color: var(--bg-warm-gray);
+            margin: 0;
+            padding: 0;
+            color: var(--text-main);
+            padding-bottom: 40px;
+        }
+
+        /* 導覽列 */
+        header {
+            background-color: var(--card-bg);
+            padding: 15px 25px;
+            box-shadow: var(--shadow-md);
+            border-bottom: 3px solid var(--accent-gold);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-area { display: flex; align-items: center; gap: 15px; }
+        .logo-area img { height: 55px; width: auto; border-radius: var(--radius-sm); }
+        .logo-area span { font-weight: 700; font-size: 1.3rem; color: var(--primary-burgundy); letter-spacing: -0.5px; }
+
+        .nav-btns { display: flex; gap: 10px; background-color: #F3F4F6; padding: 5px; border-radius: var(--radius-full); }
+        .nav-btns button {
+            padding: 10px 22px; border: none; border-radius: var(--radius-full); cursor: pointer;
+            background-color: transparent; font-weight: 600; font-size: 0.95rem; color: var(--text-light); transition: all 0.3s ease;
+        }
+        .nav-btns button:hover:not(.active) { color: var(--primary-burgundy); }
+        .nav-btns button.active { background-color: var(--primary-burgundy); color: white; box-shadow: 0 4px 6px rgba(128, 0, 0, 0.2); }
+        
+        /* 內容容器 */
+        .container {
+            max-width: 850px; margin: 30px auto; padding: 30px; background: var(--card-bg);
+            border-radius: var(--radius-md); box-shadow: var(--shadow-md);
+        }
+
+        /* 🔥 修復區域：控制分頁顯示與隱藏，並加入淡入動畫 */
+        .tab-content { display: none; }
+        .tab-content.active { 
+            display: block; 
+            animation: fadeIn 0.4s ease forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h2 { font-weight: 700; color: var(--primary-burgundy); margin-top: 0; margin-bottom: 20px; border-left: 5px solid var(--accent-gold); padding-left: 15px; }
+        h3 { font-weight: 600; color: var(--text-main); margin-top: 25px; }
+        p { color: var(--text-light); line-height: 1.6; }
+        
+        /* 表單元件 */
+        input[type="text"] {
+            width: 100%; padding: 15px 20px; margin: 10px 0 0 0; border: 2px solid #E5E7EB;
+            border-radius: var(--radius-full); box-sizing: border-box; font-size: 1rem; transition: all 0.3s ease; background-color: #F9FAFB;
+        }
+        input[type="text"]:focus { border-color: var(--accent-gold); background-color: white; outline: none; box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1); }
+        input[type="file"] { margin: 15px 0; color: var(--text-light); font-size: 0.9rem; }
+        
+        button.btn {
+            background-color: var(--primary-burgundy); color: white; padding: 14px 28px; border: none;
+            border-radius: var(--radius-full); cursor: pointer; width: 100%; font-size: 1.1rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(128, 0, 0, 0.2);
+        }
+        button.btn:hover { background-color: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 12px rgba(128, 0, 0, 0.25); }
+        button.btn-danger { background-color: transparent; color: var(--danger-red); border: 2px solid var(--danger-red); box-shadow: none; }
+        button.btn-danger:hover { background-color: var(--danger-red); color: white; box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2); }
+        button.btn-success { background-color: var(--success-green); box-shadow: 0 4px 6px rgba(21, 128, 61, 0.2); }
+        button.btn-success:hover { background-color: #166534; box-shadow: 0 6px 12px rgba(21, 128, 61, 0.25); }
+        
+        /* 座位表圖片區 */
+        .seating-plan { width: 100%; text-align: center; margin-bottom: 25px; border: 2px dashed #D1D5DB; border-radius: var(--radius-md); padding: 15px; background-color: #F9FAFB; }
+        .seating-plan img { max-width: 100%; height: auto; border-radius: var(--radius-sm); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        
+        /* Smart Search 結果列表 */
+        .search-results-container {
+            max-height: 380px; overflow-y: auto; border: none; border-radius: var(--radius-md); background: white;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1); display: none; margin-top: 10px; position: absolute; width: calc(100% - 60px); z-index: 50;
+        }
+        .search-result-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #F3F4F6; }
+        .search-result-item:hover { background-color: rgba(212, 175, 55, 0.05); }
+        .guest-info strong { font-size: 1.15rem; color: var(--text-main); }
+        .guest-info span { font-size: 0.95rem; color: var(--primary-burgundy); margin-left: 10px; font-weight: 600; }
+
+        /* 列表內的按鈕 */
+        .btn-checkin { background-color: var(--primary-burgundy); color: white; border: none; padding: 9px 20px; border-radius: var(--radius-full); cursor: pointer; font-weight: 700; font-size: 0.9rem; transition: all 0.2s ease; }
+        .btn-checkin:hover { background-color: var(--primary-hover); transform: scale(1.05); }
+        .btn-signed { background-color: #E5E7EB; color: var(--text-light); border: none; padding: 9px 20px; border-radius: var(--radius-full); cursor: not-allowed; font-weight: 600; font-size: 0.9rem; }
+
+        /* 簽到成功提示 */
+        #signInAlert { padding: 18px; margin-top: 20px; border-radius: var(--radius-md); display: none; font-weight: 700; font-size: 1.15rem; text-align: center; box-shadow: var(--shadow-md); animation: slideInDown 0.4s ease; }
+        @keyframes slideInDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        /* 後台列表 */
+        .list-group { list-style: none; padding: 0; margin-top: 15px;}
+        .list-group li { padding: 15px 20px; background-color: #F9FAFB; border: 1px solid #E5E7EB; margin-bottom: 8px; border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center; transition: all 0.2s ease; }
+        .list-group li:hover { border-color: #D1D5DB; background-color: white; }
+        .status-badge { background-color: var(--success-green); color: white; padding: 5px 12px; border-radius: var(--radius-full); font-size: 0.8rem; font-weight: 700; white-space: nowrap; }
+
+        /* 手機版適配微調 */
         @media (max-width: 600px) {
-            header { flex-direction: column; gap: 15px; }
-            .nav-btns { display: flex; width: 100%; justify-content: center; }
+            header { flex-direction: column; gap: 15px; padding: 15px; text-align: center;}
+            .logo-area { flex-direction: column; gap: 5px; }
+            .logo-area img { height: 45px; }
+            .nav-btns { width: 100%; justify-content: center; }
+            .nav-btns button { padding: 10px 15px; font-size: 0.9rem; flex: 1; }
+            .container { padding: 20px; margin: 15px auto; width: calc(100% - 30px); }
+            h2 { font-size: 1.3rem; padding-left: 10px;}
             .list-group li { flex-direction: column; align-items: flex-start; gap: 8px; }
             .status-badge { align-self: flex-start; }
+            .search-result-item { flex-direction: column; align-items: flex-start; gap: 12px; }
+            .btn-checkin, .btn-signed { width: 100%; padding: 12px; }
+            .search-results-container { width: calc(100% - 40px); }
         }
     </style>
 </head>
@@ -139,8 +158,8 @@
 
     <header>
         <div class="logo-area">
-            <img src="Company logo.jpeg" alt="Company Logo" onerror="this.src='https://via.placeholder.com/150x50?text=Logo+Not+Found'">
-            <span>65th Annual Lunch 簽到系統</span>
+            <img src="Company logo.jpeg" alt="Company Logo" onerror="this.src='https://via.placeholder.com/150x50?text=Logo+NotFound'">
+            <span>65th Annual Lunch</span>
         </div>
         <div class="nav-btns">
             <button id="btn-front" class="active" onclick="switchTab('front')">前台報到</button>
@@ -148,37 +167,34 @@
         </div>
     </header>
 
-    <div id="front" class="container tab-content active">
+    <div id="front" class="container tab-content active" style="position: relative;">
         <h2>座位表參考 (Seating Plan)</h2>
         <div class="seating-plan">
             <img src="Seating plan.jpeg" alt="Seating Plan" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-            <span style="display:none; color: red;">無法載入 Seating plan.jpeg，請確認檔案與 index.html 放在同一資料夾</span>
+            <span style="display:none; color: var(--danger-red); padding: 20px;">無法載入 Seating plan.jpeg，請核對檔案名稱。</span>
         </div>
 
-        <h2>來賓簽到</h2>
-        <p>請輸入姓名 (中/英皆可) 進行搜尋與簽到：</p>
-        <input type="text" id="searchInput" placeholder="輸入姓名搜尋 (例如: Lee Ping Kai 或 李炳佳)..." onkeypress="handleEnter(event)">
-        <button class="btn" onclick="searchAndSignIn()">搜尋並簽到</button>
+        <h2>來賓簽到 (Check-in)</h2>
+        <p style="margin-bottom:8px;">接待員請輸入來賓姓名片段，下方將自動列出符合的名單：</p>
         
-        <div id="signInResult" style="margin-top: 15px; font-weight: bold; font-size: 1.1rem;"></div>
+        <input type="text" id="searchInput" placeholder="輸入姓名搜尋 (Yeung, Lee, 李炳佳...)" oninput="handleLiveSearch()" autocomplete="off">
+        
+        <div id="searchResults" class="search-results-container"></div>
+        <div id="signInAlert"></div>
     </div>
 
     <div id="back" class="container tab-content">
         <h2>1. 匯入名單資料庫 (Excel/CSV)</h2>
-        <p style="font-size: 0.9rem; color: #666;">請上傳 "65th Annual Lunch_Participants List.xlsx" 或其 CSV 版本。</p>
+        <p style="margin-top: 0;">活動開始前，請上傳包含「English Name」、「Chinese Name」、「Table No.」欄位的檔案。</p>
         <input type="file" id="excelUpload" accept=".xlsx, .xls, .csv">
-        
-        <hr style="margin: 20px 0; border: 0.5px solid #eee;">
-
+        <hr style="margin: 30px 0; border: 0; border-top: 1px solid #eee;">
         <h2>2. 已簽到名單管理</h2>
-        <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
-            <button class="btn btn-success" style="flex: 1; margin: 0;" onclick="exportExcel()">📥 匯出已簽到 Excel</button>
-            <button class="btn btn-danger" style="flex: 1; margin: 0;" onclick="resetData()">⚠️ 重置所有資料</button>
+        <div style="display: flex; gap: 15px; margin-bottom: 25px; flex-wrap: wrap;">
+            <button class="btn btn-success" style="flex: 1.5; margin: 0;" onclick="exportExcel()">📥 匯出已簽到 Excel</button>
+            <button class="btn btn-danger" style="flex: 1; margin: 0; font-size: 0.95rem; letter-spacing: 0;" onclick="resetData()">⚠️ 重置所有資料</button>
         </div>
-
-        <h3>簽到紀錄 (<span id="signCount">0</span> 人)</h3>
-        <ul id="signedInList" class="list-group">
-            </ul>
+        <h3>簽到紀錄 (已簽到: <span id="signCount" style="color:var(--success-green); font-size:1.3rem;">0</span> 人)</h3>
+        <ul id="signedInList" class="list-group"></ul>
     </div>
 
     <script>
@@ -193,19 +209,15 @@
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-btns button').forEach(el => el.classList.remove('active'));
-            
             document.getElementById(tabId).classList.add('active');
             document.getElementById('btn-' + tabId).classList.add('active');
             
             if(tabId === 'front') {
-                document.getElementById('signInResult').textContent = "";
+                hideAlert();
+                document.getElementById('searchInput').value = "";
+                document.getElementById('searchResults').style.display = "none";
                 document.getElementById('searchInput').focus();
             }
-        }
-
-        // 支援按 Enter 鍵直接簽到
-        function handleEnter(e) {
-            if (e.key === 'Enter') searchAndSignIn();
         }
 
         function handleExcelUpload(e) {
@@ -219,70 +231,126 @@
                 const firstSheetName = workbook.SheetNames[0];
                 const worksheet = workbook.Sheets[firstSheetName];
                 
-                guestDatabase = XLSX.utils.sheet_to_json(worksheet, { defval: "" }); // 確保空白欄位也會被讀取
+                guestDatabase = XLSX.utils.sheet_to_json(worksheet, { defval: "" }); 
                 localStorage.setItem('guestDatabase', JSON.stringify(guestDatabase));
                 
                 alert(`成功匯入 ${guestDatabase.length} 筆來賓資料！請回到「前台報到」進行簽到。`);
-                document.getElementById('excelUpload').value = ""; // 清空
+                document.getElementById('excelUpload').value = ""; 
             };
             reader.readAsArrayBuffer(file);
         }
 
-        function searchAndSignIn() {
-            const input = document.getElementById('searchInput').value.trim().toLowerCase();
-            const resultDiv = document.getElementById('signInResult');
+        function getDisplayName(guest) {
+            const eng = (guest['English Name'] || "").toString().trim();
+            const chi = (guest['Chinese Name'] || "").toString().trim();
             
-            if (!input) {
-                resultDiv.textContent = "請輸入姓名。";
-                resultDiv.style.color = "#EF4444";
-                return;
+            if (eng !== "" && chi !== "") {
+                return `${eng} ${chi}`; 
+            } else if (eng !== "") {
+                return eng;             
+            } else if (chi !== "") {
+                return chi;             
+            } else {
+                return "無名氏";
             }
-            if (guestDatabase.length === 0) {
-                resultDiv.textContent = "尚未匯入名單資料庫，請先至「後台管理」上傳檔案。";
-                resultDiv.style.color = "#EF4444";
+        }
+
+        function handleLiveSearch() {
+            const input = document.getElementById('searchInput').value.trim().toLowerCase();
+            const resultsContainer = document.getElementById('searchResults');
+            hideAlert(); 
+
+            if (!input) {
+                resultsContainer.style.display = "none";
+                resultsContainer.innerHTML = "";
                 return;
             }
 
-            // 根據你上傳的檔案，欄位名稱為 "English Name" 及 "Chinese Name"
-            const guest = guestDatabase.find(g => {
+            if (guestDatabase.length === 0) {
+                resultsContainer.style.display = "block";
+                resultsContainer.innerHTML = "<div style='padding:20px; color:#DC2626; font-weight:bold; text-align:center;'>尚未匯入名單，請先至後台匯入 Excel。</div>";
+                return;
+            }
+
+            const matches = guestDatabase.filter(g => {
                 const eng = (g['English Name'] || "").toString().toLowerCase();
                 const chi = (g['Chinese Name'] || "").toString();
                 return eng.includes(input) || chi.includes(input);
             });
 
-            if (guest) {
-                // 有英文先顯示英文，沒有才顯示中文
-                const engName = (guest['English Name'] || "").toString().trim();
-                const chiName = (guest['Chinese Name'] || "").toString().trim();
-                const displayName = engName !== "" ? engName : (chiName !== "" ? chiName : "無名氏");
-                
-                // 桌號欄位映射 "Table No."
+            resultsContainer.style.display = "block";
+            resultsContainer.innerHTML = "";
+
+            if (matches.length === 0) {
+                resultsContainer.innerHTML = "<div style='padding:20px; color:#6B7280; text-align:center;'>找不到符合的來賓。</div>";
+                return;
+            }
+
+            matches.forEach(guest => {
+                const displayName = getDisplayName(guest);
                 const tableNo = guest['Table No.'] || guest['Table Number'] || '未分配';
 
-                // 檢查是否已簽到
                 const alreadySigned = signedInGuests.some(sg => 
                     sg['English Name'] === guest['English Name'] && 
                     sg['Chinese Name'] === guest['Chinese Name']
                 );
 
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'search-result-item';
+                
+                let btnHtml = "";
                 if (alreadySigned) {
-                    resultDiv.textContent = `⚠️ 來賓 ${displayName} 已經簽到過了！(桌號: ${tableNo})`;
-                    resultDiv.style.color = "#F59E0B"; 
+                    btnHtml = `<button class="btn-signed" disabled>✓ 已簽到</button>`;
                 } else {
-                    guest.SignInTime = new Date().toLocaleString('zh-HK');
-                    signedInGuests.unshift(guest); // 加到最前面
-                    localStorage.setItem('signedInGuests', JSON.stringify(signedInGuests));
-                    
-                    resultDiv.textContent = `✅ 簽到成功！歡迎 ${displayName}，您的桌號是：${tableNo}`;
-                    resultDiv.style.color = "#10B981"; 
-                    
-                    renderSignedInList();
-                    document.getElementById('searchInput').value = ""; 
+                    btnHtml = `<button class="btn-checkin" onclick="signInSpecificGuest('${encodeURIComponent(guest['English Name'])}', '${encodeURIComponent(guest['Chinese Name'])}')">📝 簽到</button>`;
                 }
-            } else {
-                resultDiv.textContent = "❌ 找不到符合的來賓，請確認姓名是否正確。";
-                resultDiv.style.color = "#EF4444";
+
+                itemDiv.innerHTML = `
+                    <div class="guest-info">
+                        <strong>${displayName}</strong> 
+                        <span>(桌號: ${tableNo})</span>
+                    </div>
+                    ${btnHtml}
+                `;
+                resultsContainer.appendChild(itemDiv);
+            });
+        }
+
+        function signInSpecificGuest(engNameEnc, chiNameEnc) {
+            const engName = decodeURIComponent(engNameEnc);
+            const chiName = decodeURIComponent(chiNameEnc);
+            
+            const guest = guestDatabase.find(g => 
+                (g['English Name'] || "").toString() === engName && 
+                (g['Chinese Name'] || "").toString() === chiName
+            );
+
+            if (guest) {
+                guest.SignInTime = new Date().toLocaleString('zh-HK');
+                signedInGuests.unshift(guest);
+                localStorage.setItem('signedInGuests', JSON.stringify(signedInGuests));
+                
+                const tableNo = guest['Table No.'] || guest['Table Number'] || '未分配';
+                const displayName = getDisplayName(guest);
+
+                showAlert(`✅ 簽到成功！歡迎 <strong>${displayName}</strong>，您的桌號是：<strong>${tableNo}</strong>`, "#15803D", "#D1FAE5");
+                
+                renderSignedInList();
+                document.getElementById('searchInput').value = "";
+                document.getElementById('searchResults').style.display = "none";
+                document.getElementById('searchInput').focus();
             }
+        }
+
+        function showAlert(msg, color, bgColor) {
+            const alertDiv = document.getElementById('signInAlert');
+            alertDiv.innerHTML = msg;
+            alertDiv.style.color = color;
+            alertDiv.style.backgroundColor = bgColor;
+            alertDiv.style.display = "block";
+        }
+        function hideAlert() {
+            document.getElementById('signInAlert').style.display = "none";
         }
 
         function renderSignedInList() {
@@ -291,17 +359,15 @@
             list.innerHTML = "";
 
             signedInGuests.forEach(guest => {
-                const engName = (guest['English Name'] || "").toString().trim();
-                const chiName = (guest['Chinese Name'] || "").toString().trim();
-                const displayName = engName !== "" ? engName : (chiName !== "" ? chiName : "無名氏");
+                const displayName = getDisplayName(guest);
                 const tableNo = guest['Table No.'] || guest['Table Number'] || 'N/A';
                 const timeStr = guest.SignInTime ? guest.SignInTime.split(' ')[1] : '';
 
                 const li = document.createElement('li');
                 li.innerHTML = `
                     <span>
-                        <strong style="font-size:1.1rem;">${displayName}</strong> 
-                        <small style="color:#6B7280; margin-left: 8px;">(桌號: ${tableNo})</small>
+                        <strong style="font-size:1.1rem; color:#111827;">${displayName}</strong> 
+                        <small style="color:#6B7280; margin-left: 10px; font-weight:600;">(桌號: ${tableNo})</small>
                     </span>
                     <span class="status-badge">已簽到 ${timeStr}</span>
                 `;
@@ -327,7 +393,9 @@
                 signedInGuests = [];
                 guestDatabase = [];
                 renderSignedInList();
-                document.getElementById('signInResult').textContent = "";
+                hideAlert();
+                document.getElementById('searchInput').value = "";
+                document.getElementById('searchResults').style.display = "none";
                 alert("資料已全部重置。");
             }
         }
