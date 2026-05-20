@@ -179,7 +179,7 @@
             <button class="btn-logout" onclick="handleLogout()">🔒 登出系統</button>
         </div>
         <div style="background-color: #ECFDF5; border: 1px solid #10B981; padding: 15px; border-radius: var(--radius-md); color: #065F46; font-weight: 600; margin-bottom: 30px; display: flex; align-items: center; gap: 10px;">
-            <span style="font-size: 1.5rem;">✅</span> 系統已成功連線至 Google Sheets，資料將即時跨裝置同步。
+            <span style="font-size: 1.5rem;">✅</span> 系統已成功連線至 Google Sheets。
         </div>
         
         <h2>2. 已簽到名單總覽</h2>
@@ -202,21 +202,11 @@
     </div>
 
     <script>
-        // ==========================================
-        // ⚠️ 請將下方的 URL 替換為你的 Web App URL
-        // ==========================================
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby2lELHtiwgW6rvQRn2dLDbJw4yzhb_WlJIOcFTVeM3adrd-I0nIKua1Ib9BXR99HcsgA/exec"; 
-        
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwtRWHx-zyrQhr9fC5r0Vo5jv3eHf_UIU14C12dxX_NXYitQ5J1lKwMWXLA3P3Vb-FIIQ/exec"; 
         let guestDatabase = []; 
         let isAdminLoggedIn = sessionStorage.getItem('adminAuth') === 'true';
 
-        window.onload = () => {
-            if (WEB_APP_URL === "YOUR_WEB_APP_URL_HERE") {
-                alert("⚠️ 請注意：尚未填寫 WEB_APP_URL！系統無法連線至 Google Sheets。");
-            } else {
-                fetchCloudData();
-            }
-        };
+        window.onload = () => fetchCloudData();
 
         function fetchCloudData() {
             const syncBtn = document.getElementById('btn-sync');
@@ -226,24 +216,20 @@
             syncBtn.classList.add('syncing');
             loader.style.display = 'flex';
             searchInput.disabled = true;
-            searchInput.placeholder = "正在載入雲端資料...";
 
             fetch(WEB_APP_URL)
                 .then(response => response.json())
                 .then(data => {
                     guestDatabase = data;
                     renderSignedInList(); 
-                    
                     loader.style.display = 'none';
                     syncBtn.classList.remove('syncing');
                     searchInput.disabled = false;
-                    searchInput.placeholder = "輸入姓名尋找 (Chan, Lee, 陳大文...)";
-                    
                     if(searchInput.value.trim() !== "") handleLiveSearch();
                 })
                 .catch(error => {
-                    console.error("Error fetching data:", error);
-                    alert("連線 Google Sheets 失敗，請檢查網路或網址。");
+                    console.error("Error:", error);
+                    alert("連線 Google Sheets 失敗，請確認已部署並設定為「Anyone」。");
                     loader.style.display = 'none';
                     syncBtn.classList.remove('syncing');
                 });
@@ -253,15 +239,8 @@
             fetch(WEB_APP_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({
-                    engName: engName,
-                    chiName: chiName,
-                    time: signInTime
-                })
-            }).then(res => res.json())
-              .then(data => {
-                  if(!data.success) console.error("雲端更新失敗");
-              }).catch(err => console.error("發送至雲端失敗:", err));
+                body: JSON.stringify({ engName: engName, chiName: chiName, time: signInTime })
+            });
         }
 
         function getDisplayName(guest) {
@@ -278,12 +257,7 @@
             const MathContainer = document.getElementById('searchResults');
             hideAlert(); 
 
-            if (!input) {
-                MathContainer.style.display = "none";
-                MathContainer.innerHTML = "";
-                return;
-            }
-
+            if (!input) { MathContainer.style.display = "none"; return; }
             const matches = guestDatabase.filter(g => {
                 const eng = (g['English Name'] || "").toString().toLowerCase();
                 const chi = (g['Chinese Name'] || "").toString();
@@ -291,35 +265,15 @@
             });
 
             MathContainer.style.display = "block";
-            MathContainer.innerHTML = "";
-
-            if (matches.length === 0) {
-                MathContainer.innerHTML = "<div style='padding:20px; color:#6B7280; text-align:center;'>找不到符合的來賓。</div>";
-                return;
-            }
-
+            MathContainer.innerHTML = matches.length === 0 ? "<div style='padding:20px; color:#6B7280; text-align:center;'>找不到符合的來賓。</div>" : "";
             matches.forEach(guest => {
                 const displayName = getDisplayName(guest);
                 const tableNo = guest['Table No.'] || guest['Table Number'] || '未分配';
                 const alreadySigned = (guest['SignInTime'] && guest['SignInTime'].toString().trim() !== "");
-
                 const itemDiv = document.createElement('div');
                 itemDiv.className = 'search-result-item';
-                
-                let btnHtml = "";
-                if (alreadySigned) {
-                    btnHtml = `<button class="btn-signed" disabled>✓ 已簽到</button>`;
-                } else {
-                    btnHtml = `<button class="btn-checkin" onclick="signInSpecificGuest('${encodeURIComponent(guest['English Name'])}', '${encodeURIComponent(guest['Chinese Name'])}')">📝 簽到</button>`;
-                }
-
-                itemDiv.innerHTML = `
-                    <div class="guest-info">
-                        <strong>${displayName}</strong> 
-                        <span>(桌號: ${tableNo})</span>
-                    </div>
-                    ${btnHtml}
-                `;
+                itemDiv.innerHTML = `<div class="guest-info"><strong>${displayName}</strong> <span>(桌號: ${tableNo})</span></div>` + 
+                                    (alreadySigned ? `<button class="btn-signed" disabled>✓ 已簽到</button>` : `<button class="btn-checkin" onclick="signInSpecificGuest('${encodeURIComponent(guest['English Name'])}', '${encodeURIComponent(guest['Chinese Name'])}')">📝 簽到</button>`);
                 MathContainer.appendChild(itemDiv);
             });
         }
@@ -327,23 +281,12 @@
         function signInSpecificGuest(engNameEnc, chiNameEnc) {
             const engName = decodeURIComponent(engNameEnc);
             const chiName = decodeURIComponent(chiNameEnc);
-            
-            const guest = guestDatabase.find(g => 
-                (g['English Name'] || "").toString() === engName && 
-                (g['Chinese Name'] || "").toString() === chiName
-            );
-
+            const guest = guestDatabase.find(g => (g['English Name'] || "").toString() === engName && (g['Chinese Name'] || "").toString() === chiName);
             if (guest) {
                 const timeStr = new Date().toLocaleString('zh-HK');
                 guest['SignInTime'] = timeStr; 
-                
                 updateCloudData(guest['English Name'] || "", guest['Chinese Name'] || "", timeStr);
-                
-                const tableNo = guest['Table No.'] || guest['Table Number'] || '未分配';
-                const displayName = getDisplayName(guest);
-
-                showAlert(`✅ 簽到成功！歡迎 <strong>${displayName}</strong>，您的桌號是：<strong>${tableNo}</strong>`, "#15803D", "#D1FAE5");
-                
+                showAlert(`✅ 簽到成功！歡迎 <strong>${getDisplayName(guest)}</strong>，桌號：<strong>${guest['Table No.'] || '未分配'}</strong>`, "#15803D", "#D1FAE5");
                 renderSignedInList();
                 document.getElementById('searchInput').value = "";
                 document.getElementById('searchResults').style.display = "none";
@@ -354,86 +297,35 @@
         function renderSignedInList() {
             const list = document.getElementById('signedInList');
             list.innerHTML = "";
-            
             const signedInGuests = guestDatabase.filter(g => g['SignInTime'] && g['SignInTime'].toString().trim() !== "");
             signedInGuests.sort((a, b) => new Date(b.SignInTime) - new Date(a.SignInTime));
-
             document.getElementById('signCount').textContent = signedInGuests.length;
-
             signedInGuests.forEach(guest => {
-                const displayName = getDisplayName(guest);
-                const tableNo = guest['Table No.'] || guest['Table Number'] || 'N/A';
-                const timeStr = guest['SignInTime'].split(' ')[1] || guest['SignInTime'];
-
                 const li = document.createElement('li');
-                li.innerHTML = `
-                    <span>
-                        <strong style="font-size:1.1rem; color:#111827;">${displayName}</strong> 
-                        <small style="color:#6B7280; margin-left: 10px; font-weight:600;">(桌號: ${tableNo})</small>
-                    </span>
-                    <span class="status-badge">已簽到 ${timeStr}</span>
-                `;
+                li.innerHTML = `<span><strong style="color:#111827;">${getDisplayName(guest)}</strong><small style="margin-left:10px;">(桌號: ${guest['Table No.'] || 'N/A'})</small></span><span class="status-badge">已簽到 ${guest['SignInTime'].split(' ')[1]}</span>`;
                 list.appendChild(li);
             });
         }
 
         function switchTab(tabId) {
-            if (tabId === 'back' && !isAdminLoggedIn) {
-                document.getElementById('loginModal').style.display = 'flex';
-                document.getElementById('adminUser').focus();
-                return;
-            }
+            if (tabId === 'back' && !isAdminLoggedIn) { document.getElementById('loginModal').style.display = 'flex'; return; }
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-btns-group button').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             document.getElementById('btn-' + tabId).classList.add('active');
-            
-            if(tabId === 'front') {
-                hideAlert();
-                document.getElementById('searchInput').value = "";
-                document.getElementById('searchResults').style.display = "none";
-                document.getElementById('searchInput').focus();
-            }
-        }
-
-        function closeLoginModal() {
-            document.getElementById('loginModal').style.display = 'none';
-            document.getElementById('loginError').style.display = 'none';
-            document.getElementById('adminUser').value = '';
-            document.getElementById('adminPass').value = '';
         }
 
         function handleLogin() {
-            const user = document.getElementById('adminUser').value.trim();
-            const pass = document.getElementById('adminPass').value.trim();
-            
-            if (user === 'admin' && pass === 'Abcd1234') {
-                isAdminLoggedIn = true;
-                sessionStorage.setItem('adminAuth', 'true');
-                closeLoginModal();
-                switchTab('back');
-            } else {
-                document.getElementById('loginError').style.display = 'block';
-                document.getElementById('adminPass').value = '';
-                document.getElementById('adminPass').focus();
-            }
+            if (document.getElementById('adminUser').value === 'admin' && document.getElementById('adminPass').value === 'Abcd1234') {
+                isAdminLoggedIn = true; sessionStorage.setItem('adminAuth', 'true');
+                document.getElementById('loginModal').style.display = 'none'; switchTab('back');
+            } else { document.getElementById('loginError').style.display = 'block'; }
         }
 
-        function handleLogout() {
-            isAdminLoggedIn = false;
-            sessionStorage.removeItem('adminAuth');
-            switchTab('front');
-            alert("已登出系統，系統已鎖定。");
-        }
-
-        function showAlert(msg, color, bgColor) {
-            const alertDiv = document.getElementById('signInAlert');
-            alertDiv.innerHTML = msg;
-            alertDiv.style.color = color;
-            alertDiv.style.backgroundColor = bgColor;
-            alertDiv.style.display = "block";
-        }
+        function handleLogout() { isAdminLoggedIn = false; sessionStorage.removeItem('adminAuth'); switchTab('front'); }
+        function showAlert(msg, color, bgColor) { const alertDiv = document.getElementById('signInAlert'); alertDiv.innerHTML = msg; alertDiv.style.color = color; alertDiv.style.backgroundColor = bgColor; alertDiv.style.display = "block"; }
         function hideAlert() { document.getElementById('signInAlert').style.display = "none"; }
+        function closeLoginModal() { document.getElementById('loginModal').style.display = 'none'; }
     </script>
 </body>
 </html>
