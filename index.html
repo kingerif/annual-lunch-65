@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>65th Annual Lunch - 活動簽到與後台管理系統</title>
+    <title>Associated Engineers, Ltd - 65th Anniversary Annual Lunch</title>
     
     <script>
         (function() {
@@ -15,7 +15,7 @@
                     document.body.innerHTML = `
                         <div style="display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #FDFCFB; font-family: 'Poppins', 'Noto Sans HK', sans-serif; text-align: center; flex-direction: column; padding: 20px;">
                             <h1 style="color: #800000; font-size: 2.5rem; margin-bottom: 10px;">系統已關閉<br>System Closed</h1>
-                            <p style="color: #6B7280; font-size: 1.2rem;">65th Annual Lunch 簽到系統已於設定時間停止服務。<br>感謝您的參與！</p>
+                            <p style="color: #6B7280; font-size: 1.2rem;">65th Annual Lunch 簽到系統已於設定時間停止服務。<br>The check-in system has been closed.<br>感謝您的參與 Thank you for participating!</p>
                         </div>
                     `;
                 });
@@ -46,11 +46,16 @@
         * { box-sizing: border-box; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
         body { font-family: 'Poppins', 'Noto Sans HK', sans-serif; background-color: var(--bg-warm-gray); margin: 0; padding: 0; color: var(--text-main); padding-bottom: 40px; }
 
-        header { background-color: var(--card-bg); padding: 15px 25px; box-shadow: var(--shadow-md); border-bottom: 3px solid var(--accent-gold); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+        header { background-color: var(--card-bg); padding: 12px 25px; box-shadow: var(--shadow-md); border-bottom: 3px solid var(--accent-gold); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
         .logo-area { display: flex; align-items: center; gap: 15px; cursor: pointer; transition: opacity 0.2s ease; }
         .logo-area:hover { opacity: 0.8; }
-        .logo-area img { height: 55px; width: auto; border-radius: var(--radius-sm); }
-        .logo-area span { font-weight: 700; font-size: 1.3rem; color: var(--primary-burgundy); letter-spacing: -0.5px; }
+        .logo-area img { height: 60px; width: auto; border-radius: var(--radius-sm); }
+        
+        /* 🔥 新增標題文字排版樣式 */
+        .title-group { display: flex; flex-direction: column; line-height: 1.25; }
+        .title-main { font-weight: 700; font-size: 1.15rem; color: var(--primary-burgundy); letter-spacing: -0.3px; }
+        .title-sub { font-weight: 600; font-size: 0.95rem; color: var(--text-main); }
+        .title-chi { font-weight: 600; font-size: 0.9rem; color: var(--text-light); font-family: 'Noto Sans HK', sans-serif; }
 
         .nav-btns { display: flex; gap: 10px; align-items: center; }
         .nav-btns-group { display: flex; gap: 5px; background-color: #F3F4F6; padding: 5px; border-radius: var(--radius-full); }
@@ -58,10 +63,13 @@
         .nav-btns button:hover:not(.active) { color: var(--primary-burgundy); }
         .nav-btns button.active { background-color: var(--primary-burgundy); color: white; box-shadow: 0 4px 6px rgba(128, 0, 0, 0.2); }
         
-        .btn-sync { background-color: #E0E7FF !important; color: #4338CA !important; display: flex; align-items: center; gap: 5px; margin-right: 10px; }
+        .btn-sync { background-color: #E0E7FF !important; color: #4338CA !important; display: flex; align-items: center; gap: 5px; margin-right: 5px; }
         .btn-sync:hover { background-color: #C7D2FE !important; }
         .sync-icon { transition: transform 1s ease; }
         .syncing .sync-icon { transform: rotate(360deg); }
+
+        .btn-lang { background-color: #F3F4F6 !important; color: #374151 !important; border: 1px solid #D1D5DB !important; display: flex; align-items: center; gap: 5px; margin-right: 5px; font-weight: bold !important; }
+        .btn-lang:hover { background-color: #E5E7EB !important; }
 
         .container { max-width: 1100px; margin: 30px auto; padding: 30px; background: var(--card-bg); border-radius: var(--radius-md); box-shadow: var(--shadow-md); }
         .tab-content { display: none; }
@@ -117,7 +125,7 @@
         .spinner { border: 4px solid rgba(0,0,0,0.1); width: 40px; height: 40px; border-radius: 50%; border-left-color: var(--primary-burgundy); animation: spin 1s linear infinite; margin-bottom: 15px;}
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* 各桌全名單卡片：完美對齊 Table 排版 */
+        /* 各桌全名單卡片 */
         .table-status-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 20px; margin-top: 20px; }
         .table-card { background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: var(--radius-md); padding: 15px 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
         .table-card-header { font-weight: 700; color: var(--primary-burgundy); border-bottom: 2px solid var(--accent-gold); padding-bottom: 10px; margin-bottom: 8px; font-size: 1.15rem; display: flex; justify-content: space-between; align-items: center; }
@@ -133,29 +141,19 @@
         .guest-arrived { color: var(--success-green); }
         .guest-time { font-size: 0.82rem !important; color: #9CA3AF; font-weight: normal !important; text-align: left !important; }
 
-        /* 🔥 全螢幕巨大化桌號特效 (無圖片版) 🔥 */
-        .massive-table-overlay { 
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
-            background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(5px);
-            z-index: 10000; display: flex; justify-content: center; align-items: center; 
-            opacity: 0; pointer-events: none; transition: opacity 0.3s ease; 
-            cursor: pointer; /* 提示可以點擊關閉 */
-        }
+        /* 全螢幕巨大化桌號 */
+        .massive-table-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(5px); z-index: 10000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; cursor: pointer; }
         .massive-table-overlay.show { opacity: 1; pointer-events: auto; }
-        .massive-table-content { 
-            background: var(--primary-burgundy); color: var(--accent-gold); 
-            padding: 50px 100px; border-radius: 40px; text-align: center; 
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5); 
-            transform: scale(0.5); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            border: 6px solid var(--accent-gold); 
-        }
+        .massive-table-content { background: var(--primary-burgundy); color: var(--accent-gold); padding: 50px 100px; border-radius: 40px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.5); transform: scale(0.5); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 6px solid var(--accent-gold); }
         .massive-table-overlay.show .massive-table-content { transform: scale(1); }
         .massive-title { font-size: 2.5rem; display: block; margin-bottom: 10px; font-weight: 600; color: #fff; letter-spacing: 2px; }
         #massiveTableNo { font-size: 9rem; font-weight: 700; line-height: 1; text-shadow: 0 10px 20px rgba(0,0,0,0.3); display: block; }
 
-        @media (max-width: 850px) { .front-layout { flex-direction: column; gap: 25px; } }
-        @media (max-width: 600px) {
+        @media (max-width: 850px) { 
             header { flex-direction: column; gap: 15px; padding: 15px; text-align: center;}
+            .front-layout { flex-direction: column; gap: 25px; } 
+        }
+        @media (max-width: 600px) {
             .nav-btns { width: 100%; justify-content: center; flex-wrap: wrap; gap: 10px;}
             .container { padding: 20px; margin: 15px auto; width: calc(100% - 30px); }
             .list-group li { flex-direction: column; align-items: flex-start; gap: 12px; }
@@ -172,12 +170,12 @@
 
     <div id="loader" class="loader-overlay">
         <div class="spinner"></div>
-        <div id="loader-text" style="font-weight: 600; color: var(--primary-burgundy);">正在與 Google Sheets 同步資料...</div>
+        <div id="loader-text" style="font-weight: 600; color: var(--primary-burgundyグッズ);" data-i18n="loading_data">正在與 Google Sheets 同步資料...</div>
     </div>
 
     <div id="massiveTableOverlay" class="massive-table-overlay">
         <div class="massive-table-content">
-            <span class="massive-title">請前往桌號</span>
+            <span class="massive-title" data-i18n="massive_title">請前往桌號</span>
             <span id="massiveTableNo">8</span>
         </div>
     </div>
@@ -185,16 +183,21 @@
     <header>
         <div class="logo-area" onclick="switchTab('front')">
             <img src="Company logo.jpeg" alt="Company Logo" onerror="this.src='https://via.placeholder.com/150x50?text=Logo+NotFound'">
-            <span>65th Annual Lunch</span>
+            <div class="title-group">
+                <span class="title-main">Associated Engineers, Ltd</span>
+                <span class="title-sub">65th Anniversary Annual Lunch</span>
+                <span class="title-chi">聯誼工程有限公司六十五周年午宴</span>
+            </div>
         </div>
         <div class="nav-btns">
+            <button id="btn-lang" class="btn-lang" onclick="toggleLanguage()" data-i18n="btn_lang">🌐 English</button>
             <button id="btn-sync" class="btn-sync" onclick="fetchCloudData()">
-                <span class="sync-icon">🔄</span> 更新資料
+                <span class="sync-icon">🔄</span> <span data-i18n="btn_sync">更新資料</span>
             </button>
             <div class="nav-btns-group">
-                <button id="btn-front" class="active" onclick="switchTab('front')">首頁</button>
-                <button id="btn-back" onclick="switchTab('back')">登入</button>
-                <button id="btn-tables" onclick="switchTab('tables')" style="display: none;">各桌名單</button>
+                <button id="btn-front" class="active" onclick="switchTab('front')" data-i18n="btn_home">首頁</button>
+                <button id="btn-back" onclick="switchTab('back')" data-i18n="btn_login">登入</button>
+                <button id="btn-tables" onclick="switchTab('tables')" style="display: none;" data-i18n="btn_tables">各桌名單</button>
             </div>
         </div>
     </header>
@@ -202,19 +205,19 @@
     <div id="front" class="container tab-content active">
         <div class="front-layout">
             <div class="front-left">
-                <h2>座位表參考 (Seating Plan)</h2>
+                <h2 data-i18n="front_title_1">座位表參考 (Seating Plan)</h2>
                 <div class="seating-plan">
                     <img src="Seating plan.jpeg" alt="Seating Plan" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <span style="display:none; color: var(--danger-red); padding: 20px;">無法載入 Seating plan.jpeg</span>
+                    <span style="display:none; color: var(--danger-red); padding: 20px;" data-i18n="img_error">無法載入 Seating plan.jpeg</span>
                 </div>
             </div>
 
             <div class="front-right">
-                <h2>來賓簽到 (Check-in)</h2>
-                <p style="margin-bottom:8px;">接待員請輸入來賓姓名片段，下方將自動列出符合的名單：</p>
+                <h2 data-i18n="front_title_2">來賓簽到 (Check-in)</h2>
+                <p style="margin-bottom:8px;" data-i18n="front_desc">接待員請輸入來賓姓名片段，下方將自動列出符合的名單：</p>
                 
                 <div class="search-wrapper">
-                    <input type="text" id="searchInput" placeholder="輸入姓名尋找 (Chan, Lee, 陳大文...)" oninput="handleLiveSearch()" autocomplete="off" disabled>
+                    <input type="text" id="searchInput" data-i18n="search_placeholder" placeholder="輸入姓名尋找 (Chan, Lee, 陳大文...)" oninput="handleLiveSearch()" autocomplete="off" disabled>
                     <div id="searchResults" class="search-results-container"></div>
                 </div>
                 
@@ -225,70 +228,216 @@
 
     <div id="tables" class="container tab-content">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <h2 style="margin-bottom: 0;">各桌全名單報到狀態</h2>
-            <button class="btn-logout" onclick="handleLogout()">🔒 登出系統</button>
+            <h2 style="margin-bottom: 0;" data-i18n="tables_title">各桌全名單報到狀態</h2>
+            <button class="btn-logout" onclick="handleLogout()" data-i18n="btn_logout">🔒 登出系統</button>
         </div>
-        <p style="color: var(--text-light); margin-top: 0; margin-bottom: 20px;">實時顯示各桌所有人名單：<span style="color: var(--success-green); font-weight: bold;">綠色</span>代表已簽到 (附時間)，<span style="color: var(--danger-red); font-weight: bold;">紅色</span>代表未到。</p>
+        <p style="color: var(--text-light); margin-top: 0; margin-bottom: 20px;" data-i18n="tables_desc">實時顯示各桌所有人名單：<span style="color: var(--success-green); font-weight: bold;">綠色</span>代表已簽到 (附時間)，<span style="color: var(--danger-red); font-weight: bold;">紅色</span>代表未到。</p>
         
         <div id="tableStatusContainer" class="table-status-grid"></div>
     </div>
 
     <div id="back" class="container tab-content">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2 style="margin-bottom: 0;">雲端資料庫連線</h2>
-            <button class="btn-logout" onclick="handleLogout()">🔒 登出系統</button>
+            <h2 style="margin-bottom: 0;" data-i18n="back_title_1">雲端資料庫連線</h2>
+            <button class="btn-logout" onclick="handleLogout()" data-i18n="btn_logout">🔒 登出系統</button>
         </div>
-        <div style="background-color: #ECFDF5; border: 1px solid #10B981; padding: 15px; border-radius: var(--radius-md); color: #065F46; font-weight: 600; margin-bottom: 30px; display: flex; align-items: center; gap: 10px;">
+        <div style="background-color: #ECFDF5; border: 1px solid #10B981; padding: 15px; border-radius: var(--radius-md); color: #065F46; font-weight: 600; margin-bottom: 30px; display: flex; align-items: center; gap: 10px;" data-i18n="db_connected">
             <span style="font-size: 1.5rem;">✅</span> 系統已成功連線至 Google Sheets。
         </div>
         
-        <h2>已簽到名單總覽</h2>
+        <h2 data-i18n="back_title_2">已簽到名單總覽</h2>
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 15px;">
-            <button class="btn btn-success" style="width: auto; margin: 0; padding: 10px 20px; font-size: 0.95rem;" onclick="exportExcel()">📥 匯出 Excel</button>
+            <button class="btn btn-success" style="width: auto; margin: 0; padding: 10px 20px; font-size: 0.95rem;" onclick="exportExcel()" data-i18n="btn_export">📥 匯出 Excel</button>
             
             <div style="display: flex; gap: 8px;">
-                <button class="btn-secondary" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #D1D5DB; background: #F9FAFB; cursor: pointer; font-size: 0.9rem;" onclick="selectAllCheckins()">☑️ 全選</button>
-                <button class="btn-secondary" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #D1D5DB; background: #F9FAFB; cursor: pointer; font-size: 0.9rem;" onclick="deselectAllCheckins()">☐ 取消全選</button>
-                <button class="btn-secondary" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #EF4444; color: #EF4444; background: #FEF2F2; cursor: pointer; font-size: 0.9rem; font-weight: bold;" onclick="deleteSelectedCheckins()">🗑️ 刪除已選取</button>
+                <button class="btn-secondary" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #D1D5DB; background: #F9FAFB; cursor: pointer; font-size: 0.9rem;" onclick="selectAllCheckins()" data-i18n="btn_select_all">☑️ 全選</button>
+                <button class="btn-secondary" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #D1D5DB; background: #F9FAFB; cursor: pointer; font-size: 0.9rem;" onclick="deselectAllCheckins()" data-i18n="btn_deselect_all">☐ 取消全選</button>
+                <button class="btn-secondary" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #EF4444; color: #EF4444; background: #FEF2F2; cursor: pointer; font-size: 0.9rem; font-weight: bold;" onclick="deleteSelectedCheckins()" data-i18n="btn_delete">🗑️ 刪除已選取</button>
             </div>
         </div>
 
-        <h3 style="margin-top: 5px;">簽到紀錄 (已簽到: <span id="signCount" style="color:var(--success-green); font-size:1.3rem;">0</span> 人)</h3>
+        <h3 style="margin-top: 5px;" id="recordTitleText">
+            <span data-i18n="record_title_1">簽到紀錄 (已簽到: </span><span id="signCount" style="color:var(--success-green); font-size:1.3rem;">0</span><span data-i18n="record_title_2"> 人)</span>
+        </h3>
         <ul id="signedInList" class="list-group"></ul>
     </div>
 
     <div id="loginModal" class="modal-overlay">
         <div class="modal-content">
-            <h2 style="border:none; padding:0; text-align:center; font-size:1.5rem; margin-bottom:5px;">管理員登入</h2>
-            <p style="font-size:0.9rem; color:var(--text-light); margin-bottom:20px;">請輸入帳號與密碼進入後台</p>
-            <div id="loginError" class="modal-error">❌ 帳號或密碼錯誤！</div>
-            <input type="text" id="adminUser" placeholder="帳號 (Username)" autocomplete="off">
-            <input type="password" id="adminPass" placeholder="密碼 (Password)" onkeypress="if(event.key === 'Enter') handleLogin()">
+            <h2 style="border:none; padding:0; text-align:center; font-size:1.5rem; margin-bottom:5px;" data-i18n="login_title">管理員登入</h2>
+            <p style="font-size:0.9rem; color:var(--text-light); margin-bottom:20px;" data-i18n="login_desc">請輸入帳號與密碼進入後台</p>
+            <div id="loginError" class="modal-error" data-i18n="login_error">❌ 帳號或密碼錯誤！</div>
+            <input type="text" id="adminUser" data-i18n="user_placeholder" placeholder="帳號 (Username)" autocomplete="off">
+            <input type="password" id="adminPass" data-i18n="pass_placeholder" placeholder="密碼 (Password)" onkeypress="if(event.key === 'Enter') handleLogin()">
             <div class="modal-btns">
-                <button class="btn btn-secondary" onclick="closeLoginModal()">取消</button>
-                <button class="btn" onclick="handleLogin()">登入</button>
+                <button class="btn btn-secondary" onclick="closeLoginModal()" data-i18n="btn_cancel">取消</button>
+                <button class="btn" onclick="handleLogin()" data-i18n="btn_submit">登入</button>
             </div>
         </div>
     </div>
 
     <script>
+        // 雙語翻譯字典
+        const i18n = {
+            zh: {
+                btn_lang: "🌐 English",
+                btn_sync: "更新資料",
+                btn_home: "首頁",
+                btn_tables: "各桌名單",
+                btn_login: "登入",
+                btn_logout: "🔒 登出系統",
+                
+                front_title_1: "座位表參考 (Seating Plan)",
+                img_error: "無法載入 Seating plan.jpeg",
+                front_title_2: "來賓簽到 (Check-in)",
+                front_desc: "接待員請輸入來賓姓名片段，下方將自動列出符合的名單：",
+                search_placeholder: "輸入姓名尋找 (Chan, Lee, 陳大文...)",
+                
+                tables_title: "各桌全名單報到狀態",
+                tables_desc: "實時顯示各桌所有人名單：<span style='color: var(--success-green); font-weight: bold;'>綠色</span>代表已簽到 (附時間)，<span style='color: var(--danger-red); font-weight: bold;'>紅色</span>代表未到。",
+                
+                back_title_1: "雲端資料庫連線",
+                db_connected: "<span style='font-size: 1.5rem;'>✅</span> 系統已成功連線至 Google Sheets。",
+                back_title_2: "已簽到名單總覽",
+                btn_export: "📥 匯出 Excel",
+                btn_select_all: "☑️ 全選",
+                btn_deselect_all: "☐ 取消全選",
+                btn_delete: "🗑️ 刪除已選取",
+                record_title_1: "簽到紀錄 (已簽到: ",
+                record_title_2: " 人)",
+                
+                login_title: "管理員登入",
+                login_desc: "請輸入帳號與密碼進入後台",
+                login_error: "❌ 帳號或密碼錯誤！",
+                user_placeholder: "帳號 (Username)",
+                pass_placeholder: "密碼 (Password)",
+                btn_cancel: "取消",
+                btn_submit: "登入",
+                
+                loading_data: "正在與 Google Sheets 同步資料...",
+                sync_fail: "連線 Google Sheets 失敗，請確認已部署並設定為「Anyone」。",
+                no_match: "找不到符合的來賓。",
+                table_unassigned: "未分配",
+                btn_checked_in: "✓ 已簽到",
+                btn_check_in: "📝 簽到",
+                alert_success: "✅ 簽到成功！歡迎",
+                alert_table: "桌號：",
+                status_signed: "已簽到",
+                
+                card_table: "桌號: ",
+                card_missing: "欠",
+                card_people: "人",
+                card_all_arrived: "✅ 全桌已到齊",
+                
+                del_alert_1: "請先在名單左側勾選要取消簽到的來賓！",
+                del_alert_2: "⚠️ 確定要取消這 {count} 位來賓的簽到紀錄嗎？\n(這將會同時清除 Google Sheet 上的時間)",
+                del_progress: "正在刪除簽到紀錄",
+                del_success: "✅ 已成功取消 {count} 位來賓的簽到紀錄！",
+                
+                logout_msg: "已登出系統，系統已鎖定。",
+                export_empty: "目前沒有已簽到的來賓可匯出。",
+                massive_title: "請前往桌號"
+            },
+            en: {
+                btn_lang: "🌐 中文",
+                btn_sync: "Sync Data",
+                btn_home: "Home",
+                btn_tables: "Table Status",
+                btn_login: "Login",
+                btn_logout: "🔒 Logout",
+                
+                front_title_1: "Seating Plan",
+                img_error: "Failed to load Seating plan.jpeg",
+                front_title_2: "Guest Check-in",
+                front_desc: "Please enter a fragment of the guest's name to search:",
+                search_placeholder: "Search name (Chan, Lee...)",
+                
+                tables_title: "Table Check-in Status",
+                tables_desc: "Real-time table status: <span style='color: var(--success-green); font-weight: bold;'>Green</span> = Checked-in, <span style='color: var(--danger-red); font-weight: bold;'>Red</span> = Not arrived.",
+                
+                back_title_1: "Cloud Database Connection",
+                db_connected: "<span style='font-size: 1.5rem;'>✅</span> Successfully connected to Google Sheets.",
+                back_title_2: "Check-in Overview",
+                btn_export: "📥 Export Excel",
+                btn_select_all: "☑️ Select All",
+                btn_deselect_all: "☐ Deselect All",
+                btn_delete: "🗑️ Delete Selected",
+                record_title_1: "Check-in Records (Total: ",
+                record_title_2: ")",
+                
+                login_title: "Admin Login",
+                login_desc: "Enter username and password for Admin access",
+                login_error: "❌ Invalid username or password!",
+                user_placeholder: "Username",
+                pass_placeholder: "Password",
+                btn_cancel: "Cancel",
+                btn_submit: "Login",
+                
+                loading_data: "Syncing with Google Sheets...",
+                sync_fail: "Connection failed. Please check deployment settings ('Anyone').",
+                no_match: "No matching guests found.",
+                table_unassigned: "N/A",
+                btn_checked_in: "✓ Checked-in",
+                btn_check_in: "📝 Check-in",
+                alert_success: "✅ Check-in successful! Welcome",
+                alert_table: "Table: ",
+                status_signed: "Checked-in",
+                
+                card_table: "Table: ",
+                card_missing: "Missing",
+                card_people: "Pax",
+                card_all_arrived: "✅ All Arrived",
+                
+                del_alert_1: "Please select guests to delete!",
+                del_alert_2: "⚠️ Cancel check-in for {count} guest(s)?\n(This removes the time from Google Sheets)",
+                del_progress: "Deleting record",
+                del_success: "✅ Successfully cancelled check-in for {count} guest(s)!",
+                
+                logout_msg: "Logged out. System locked.",
+                export_empty: "No records to export.",
+                massive_title: "Please proceed to Table"
+            }
+        };
+
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwtRWHx-zyrQhr9fC5r0Vo5jv3eHf_UIU14C12dxX_NXYitQ5J1lKwMWXLA3P3Vb-FIIQ/exec"; 
         let guestDatabase = []; 
         let isAdminLoggedIn = sessionStorage.getItem('adminAuth') === 'true';
         let intendedTab = 'back'; 
+        let currentLang = localStorage.getItem('appLang') || 'zh';
 
         window.onload = () => {
+            setLanguage(currentLang);
             fetchCloudData();
             toggleAdminButtons();
         };
 
+        function t(key) { return i18n[currentLang][key] || key; }
+
+        function toggleLanguage() { setLanguage(currentLang === 'zh' ? 'en' : 'zh'); }
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('appLang', lang);
+            
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[lang][key]) {
+                    if (el.tagName === 'INPUT') el.placeholder = i18n[lang][key];
+                    else el.innerHTML = i18n[lang][key];
+                }
+            });
+
+            if (guestDatabase.length > 0) {
+                if (document.getElementById('searchInput').value.trim() !== "") handleLiveSearch();
+                renderSignedInList();
+                if (isAdminLoggedIn) renderTableStatus();
+            }
+            hideAlert();
+        }
+
         function toggleAdminButtons() {
             const tablesBtn = document.getElementById('btn-tables');
-            if (isAdminLoggedIn) {
-                tablesBtn.style.display = 'inline-block';
-            } else {
-                tablesBtn.style.display = 'none';
-            }
+            tablesBtn.style.display = isAdminLoggedIn ? 'inline-block' : 'none';
         }
 
         function fetchCloudData() {
@@ -298,7 +447,7 @@
             
             syncBtn.classList.add('syncing');
             loader.style.display = 'flex';
-            document.getElementById('loader-text').textContent = "正在與 Google Sheets 同步資料...";
+            document.getElementById('loader-text').textContent = t('loading_data');
             searchInput.disabled = true;
 
             fetch(WEB_APP_URL)
@@ -307,15 +456,15 @@
                     guestDatabase = data;
                     renderSignedInList(); 
                     renderTableStatus(); 
-                    
                     loader.style.display = 'none';
                     syncBtn.classList.remove('syncing');
                     searchInput.disabled = false;
+                    searchInput.placeholder = t('search_placeholder');
                     if(searchInput.value.trim() !== "") handleLiveSearch();
                 })
                 .catch(error => {
                     console.error("Error:", error);
-                    alert("連線 Google Sheets 失敗，請確認已部署並設定為「Anyone」。");
+                    alert(t('sync_fail'));
                     loader.style.display = 'none';
                     syncBtn.classList.remove('syncing');
                 });
@@ -351,15 +500,16 @@
             });
 
             MathContainer.style.display = "block";
-            MathContainer.innerHTML = matches.length === 0 ? "<div style='padding:20px; color:#6B7280; text-align:center;'>找不到符合的來賓。</div>" : "";
+            MathContainer.innerHTML = matches.length === 0 ? `<div style='padding:20px; color:#6B7280; text-align:center;'>${t('no_match')}</div>` : "";
+            
             matches.forEach(guest => {
                 const displayName = getDisplayName(guest);
-                const tableNo = guest['Table No.'] || guest['Table Number'] || '未分配';
+                const tableNo = guest['Table No.'] || guest['Table Number'] || t('table_unassigned');
                 const alreadySigned = (guest['SignInTime'] && guest['SignInTime'].toString().trim() !== "");
                 const itemDiv = document.createElement('div');
                 itemDiv.className = 'search-result-item';
-                itemDiv.innerHTML = `<div class="guest-info"><strong>${displayName}</strong> <span>(桌號: ${tableNo})</span></div>` + 
-                                    (alreadySigned ? `<button class="btn-signed" disabled>✓ 已簽到</button>` : `<button class="btn-checkin" onclick="signInSpecificGuest('${encodeURIComponent(guest['English Name'])}', '${encodeURIComponent(guest['Chinese Name'])}')">📝 簽到</button>`);
+                const btnLabel = alreadySigned ? `<button class="btn-signed" disabled>${t('btn_checked_in')}</button>` : `<button class="btn-checkin" onclick="signInSpecificGuest('${encodeURIComponent(guest['English Name'])}', '${encodeURIComponent(guest['Chinese Name'])}')">${t('btn_check_in')}</button>`;
+                itemDiv.innerHTML = `<div class="guest-info"><strong>${displayName}</strong> <span>(${t('card_table')}${tableNo})</span></div>${btnLabel}`;
                 MathContainer.appendChild(itemDiv);
             });
         }
@@ -372,40 +522,27 @@
             if (guest) {
                 const timeStr = new Date().toLocaleString('zh-HK');
                 guest['SignInTime'] = timeStr; 
-                const tableNo = guest['Table No.'] || guest['Table Number'] || '未分配';
+                const tableNo = guest['Table No.'] || guest['Table Number'] || t('table_unassigned');
                 
                 updateCloudData(guest['English Name'] || "", guest['Chinese Name'] || "", timeStr).catch(e => console.error(e));
                 
-                // 🔥 觸發大字彈出特效 (無圖片版) 🔥
                 showMassiveTableOverlay(tableNo);
-                
-                showAlert(`✅ 簽到成功！歡迎 <strong>${getDisplayName(guest)}</strong>，桌號：<strong>${tableNo}</strong>`, "#15803D", "#D1FAE5");
+                showAlert(`${t('alert_success')} <strong>${getDisplayName(guest)}</strong>，${t('alert_table')}<strong>${tableNo}</strong>`, "#15803D", "#D1FAE5");
                 
                 renderSignedInList();
                 renderTableStatus(); 
-                
                 document.getElementById('searchInput').value = "";
                 document.getElementById('searchResults').style.display = "none";
                 document.getElementById('searchInput').focus();
             }
         }
 
-        // 🔥 退回無圖片版：只顯示桌號文字，停留 2.5 秒 🔥
         function showMassiveTableOverlay(tableNo) {
             const overlay = document.getElementById('massiveTableOverlay');
             document.getElementById('massiveTableNo').textContent = tableNo;
-            
             overlay.classList.add('show');
-            
-            // 點擊畫面任何地方即刻隱藏
-            overlay.onclick = () => {
-                overlay.classList.remove('show');
-            };
-            
-            // 2.5 秒後自動消失
-            setTimeout(() => {
-                overlay.classList.remove('show');
-            }, 5000);
+            overlay.onclick = () => overlay.classList.remove('show');
+            setTimeout(() => overlay.classList.remove('show'), 5000);
         }
 
         function renderSignedInList() {
@@ -417,12 +554,14 @@
             
             signedInGuests.forEach(guest => {
                 const li = document.createElement('li');
+                const tableNo = guest['Table No.'] || guest['Table Number'] || t('table_unassigned');
+                const timeOnly = guest['SignInTime'].split(' ')[1] || guest['SignInTime'];
                 li.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 15px;">
                         <input type="checkbox" class="checkin-checkbox" data-eng="${encodeURIComponent(guest['English Name'] || '')}" data-chi="${encodeURIComponent(guest['Chinese Name'] || '')}">
-                        <span><strong style="color:#111827;">${getDisplayName(guest)}</strong><small style="margin-left:10px;">(桌號: ${guest['Table No.'] || 'N/A'})</small></span>
+                        <span><strong style="color:#111827;">${getDisplayName(guest)}</strong><small style="margin-left:10px;">(${t('card_table')}${tableNo})</small></span>
                     </div>
-                    <span class="status-badge">已簽到 ${guest['SignInTime'].split(' ')[1] || guest['SignInTime']}</span>
+                    <span class="status-badge">${t('status_signed')} ${timeOnly}</span>
                 `;
                 list.appendChild(li);
             });
@@ -432,22 +571,15 @@
             const container = document.getElementById('tableStatusContainer');
             if (!container) return;
             container.innerHTML = "";
-
             const tablesData = {};
             
             guestDatabase.forEach(guest => {
-                const tableNo = guest['Table No.'] || guest['Table Number'] || '未分配';
+                const tableNo = guest['Table No.'] || guest['Table Number'] || t('table_unassigned');
                 if (!tablesData[tableNo]) tablesData[tableNo] = { total: 0, missingCount: 0, guests: [] };
-                
                 tablesData[tableNo].total++;
-                
                 const timeStr = guest['SignInTime'] ? guest['SignInTime'].toString().trim() : "";
                 const alreadySigned = timeStr !== "";
-                
-                if (!alreadySigned) {
-                    tablesData[tableNo].missingCount++;
-                }
-
+                if (!alreadySigned) tablesData[tableNo].missingCount++;
                 tablesData[tableNo].guests.push({
                     engName: (guest['English Name'] || "").toString().trim(),
                     chiName: (guest['Chinese Name'] || "").toString().trim(),
@@ -457,8 +589,7 @@
             });
 
             const sortedTableNos = Object.keys(tablesData).sort((a, b) => {
-                const numA = parseInt(a);
-                const numB = parseInt(b);
+                const numA = parseInt(a); const numB = parseInt(b);
                 if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
                 return a.localeCompare(b);
             });
@@ -467,28 +598,21 @@
                 const data = tablesData[tableNo];
                 const card = document.createElement('div');
                 card.className = 'table-card';
-                
                 let html = `
                     <div class="table-card-header">
-                        <span>桌號: ${tableNo}</span>
+                        <span>${t('card_table')}${tableNo}</span>
                         <span style="font-size: 0.85rem; color: #6B7280; font-weight: normal; background: white; padding: 2px 8px; border-radius: 12px; border: 1px solid #E5E7EB;">
-                            欠 ${data.missingCount} / ${data.total} 人
+                            ${t('card_missing')} ${data.missingCount} / ${data.total} ${t('card_people')}
                         </span>
                     </div>
                     <table class="guest-table">
                 `;
-                
                 data.guests.forEach(g => {
                     const icon = g.signedIn ? '✓' : '<span class="red-dot"></span>';
                     const rowClass = g.signedIn ? 'guest-arrived' : 'guest-missing';
-                    
                     let engFontSize = "0.95rem";
-                    if (g.engName.length > 22) {
-                        engFontSize = "0.75rem";
-                    } else if (g.engName.length > 14) {
-                        engFontSize = "0.82rem";
-                    }
-                    
+                    if (g.engName.length > 22) engFontSize = "0.75rem";
+                    else if (g.engName.length > 14) engFontSize = "0.82rem";
                     html += `
                         <tr class="${rowClass}">
                             <td style="width: 45%; font-size: ${engFontSize}; line-height: 1.2;">
@@ -497,19 +621,12 @@
                                     <span style="word-break: break-word;">${g.engName}</span>
                                 </div>
                             </td>
-                            <td style="width: 30%; word-break: break-word; line-height: 1.2;">
-                                ${g.chiName}
-                            </td>
-                            <td style="width: 25%;" class="guest-time">
-                                ${g.time}
-                            </td>
+                            <td style="width: 30%; word-break: break-word; line-height: 1.2;">${g.chiName}</td>
+                            <td style="width: 25%;" class="guest-time">${g.time}</td>
                         </tr>
                     `;
                 });
-                
-                html += `</table>`;
-                card.innerHTML = html;
-                container.appendChild(card);
+                html += `</table>`; card.innerHTML = html; container.appendChild(card);
             });
         }
 
@@ -518,8 +635,8 @@
 
         async function deleteSelectedCheckins() {
             const checkboxes = document.querySelectorAll('.checkin-checkbox:checked');
-            if (checkboxes.length === 0) { alert("請先在名單左側勾選要取消簽到的來賓！"); return; }
-            if (!confirm(`⚠️ 確定要取消這 ${checkboxes.length} 位來賓的簽到紀錄嗎？\n(這將會同時清除 Google Sheet 上的時間)`)) return;
+            if (checkboxes.length === 0) { alert(t('del_alert_1')); return; }
+            if (!confirm(t('del_alert_2').replace('{count}', checkboxes.length))) return;
 
             const loader = document.getElementById('loader');
             const loaderText = document.getElementById('loader-text');
@@ -528,58 +645,44 @@
             let count = 0;
             for (let cb of checkboxes) {
                 count++;
-                loaderText.textContent = `正在刪除簽到紀錄 (${count}/${checkboxes.length})...`;
+                loaderText.textContent = `${t('del_progress')} (${count}/${checkboxes.length})...`;
                 const eng = decodeURIComponent(cb.getAttribute('data-eng'));
                 const chi = decodeURIComponent(cb.getAttribute('data-chi'));
-                
                 const guest = guestDatabase.find(g => (g['English Name'] || "").toString() === eng && (g['Chinese Name'] || "").toString() === chi);
                 if (guest) guest['SignInTime'] = "";
-                
-                try { await updateCloudData(eng, chi, ""); } 
-                catch (e) { console.error("Delete failed for", eng, chi); }
+                try { await updateCloudData(eng, chi, ""); } catch (e) { console.error(e); }
             }
-
             loader.style.display = 'none';
-            renderSignedInList(); 
-            renderTableStatus(); 
-            alert(`✅ 已成功取消 ${checkboxes.length} 位來賓的簽到紀錄！`);
+            renderSignedInList(); renderTableStatus(); 
+            alert(t('del_success').replace('{count}', checkboxes.length));
         }
 
         function switchTab(tabId) {
             if ((tabId === 'back' || tabId === 'tables') && !isAdminLoggedIn) { 
-                intendedTab = tabId; 
-                document.getElementById('loginModal').style.display = 'flex'; 
-                document.getElementById('adminUser').focus();
-                return; 
+                intendedTab = tabId; document.getElementById('loginModal').style.display = 'flex'; 
+                document.getElementById('adminUser').focus(); return; 
             }
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-btns-group button').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             document.getElementById('btn-' + tabId).classList.add('active');
-            
             if(tabId === 'front') {
-                hideAlert();
-                document.getElementById('searchInput').value = "";
-                document.getElementById('searchResults').style.display = "none";
-                document.getElementById('searchInput').focus();
+                hideAlert(); document.getElementById('searchInput').value = "";
+                document.getElementById('searchResults').style.display = "none"; document.getElementById('searchInput').focus();
             }
         }
 
         function handleLogin() {
             if (document.getElementById('adminUser').value === 'admin' && document.getElementById('adminPass').value === 'Abcd1234') {
-                isAdminLoggedIn = true; sessionStorage.setItem('adminAuth', 'true');
+                isAdminLoggedIn = true; sessionStorage.setItem('appAuth', 'true');
                 document.getElementById('loginModal').style.display = 'none'; 
-                toggleAdminButtons(); 
-                switchTab(intendedTab); 
+                toggleAdminButtons(); switchTab(intendedTab); 
             } else { document.getElementById('loginError').style.display = 'block'; }
         }
 
         function handleLogout() { 
-            isAdminLoggedIn = false; 
-            sessionStorage.removeItem('adminAuth'); 
-            toggleAdminButtons(); 
-            switchTab('front'); 
-            alert("已登出系統，系統已鎖定。"); 
+            isAdminLoggedIn = false; sessionStorage.removeItem('adminAuth'); 
+            toggleAdminButtons(); switchTab('front'); alert(t('logout_msg')); 
         }
         
         function showAlert(msg, color, bgColor) { const alertDiv = document.getElementById('signInAlert'); alertDiv.innerHTML = msg; alertDiv.style.color = color; alertDiv.style.backgroundColor = bgColor; alertDiv.style.display = "block"; }
@@ -588,11 +691,11 @@
 
         function exportExcel() {
             const signedInGuests = guestDatabase.filter(g => g['SignInTime'] && g['SignInTime'].toString().trim() !== "");
-            if (signedInGuests.length === 0) { alert("目前沒有已簽到的來賓可匯出。"); return; }
+            if (signedInGuests.length === 0) { alert(t('export_empty')); return; }
             const worksheet = XLSX.utils.json_to_sheet(signedInGuests);
             const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "已簽到名單");
-            XLSX.writeFile(workbook, "已簽到名單_65th_Annual_Lunch.xlsx");
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Check-in Records");
+            XLSX.writeFile(workbook, "Check-in_List_65th_Annual_Lunch.xlsx");
         }
     </script>
 </body>
