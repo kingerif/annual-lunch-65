@@ -673,7 +673,7 @@
         }
 
         function handleLogin() {
-            if (document.getElementById('adminUser').value === 'admin' && document.getElementById('adminPass').value === 'Abcd1234') {
+            if (document.getElementById('adminUser').value === 'admin' && document.getElementById('adminPass').value === 'admin') {
                 isAdminLoggedIn = true; sessionStorage.setItem('appAuth', 'true');
                 document.getElementById('loginModal').style.display = 'none'; 
                 toggleAdminButtons(); switchTab(intendedTab); 
